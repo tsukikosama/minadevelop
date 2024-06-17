@@ -45,11 +45,11 @@ public class Task implements Serializable {
 
     @ApiModelProperty("发布时间")
     @TableField("create_datetime")
-    private LocalDateTime createDatetime;
+    private String createDatetime;
 
     @ApiModelProperty("更新时间")
     @TableField("task_updatetime")
-    private LocalDateTime taskUpdatetime;
+    private String taskUpdatetime;
 
     @ApiModelProperty("任务状态 0正常 1 结束")
     @TableField("status")

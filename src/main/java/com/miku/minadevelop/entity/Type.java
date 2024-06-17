@@ -36,7 +36,7 @@ public class Type implements Serializable {
 
     @ApiModelProperty("更新时间")
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private String createTime;
 
 
 }
