@@ -38,7 +38,7 @@ server:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 10MB # 设置单个文件最大大小为10MB
+      max-file-size: 100MB # 设置单个文件最大大小为10MB
       max-request-size: 100MB    # 设置多个文件大小为100MB
 #配置日志地址
 logging:
@@ -98,7 +98,7 @@ sa-token:
   # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
   active-timeout: -1
   # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
-  is-concurrent: true
+  is-concurrent: false
   # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
   is-share: true
   # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
@@ -136,3 +136,6 @@ captcha:
     expire: 120000
     # 二次验证缓存key前缀，默认是 captcha:secondary
     keyPrefix: "captcha:secondary"
+minadevelop:
+  fileurl: D:/nginx-1.26.1/file/
+  weburl: http://localhost/upload/
