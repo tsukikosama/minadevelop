@@ -45,9 +45,9 @@ logging:
   config: classpath:log/logback_dev.xml
 # mybatis
 mybatis-plus:
-  mapper-locations: classpath:mapper/*Mapper.xml
+  mapper-locations: classpath:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.miku.minadevelop.entity
+  typeAliasesPackage: com.miku.minadevelop.*.entity
   #typeEnumsPackage: org.springblade.dashboard.entity.enums
   global-config:
     # 关闭MP3.0自带的banner
