@@ -28,7 +28,7 @@ public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
-    @TableId(value = "product_id", type = IdType.AUTO)
+    @TableId(value = "product_id", type = IdType.ASSIGN_UUID)
     private Integer productId;
 
     @ApiModelProperty("商品名")
@@ -58,4 +58,8 @@ public class Product implements Serializable {
     @ApiModelProperty("文件地址")
     @TableField("file_url")
     private String fileUrl;
+
+    @ApiModelProperty("商品价格")
+    @TableField("product_price")
+    private String productPrice;
 }

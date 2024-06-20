@@ -2,10 +2,15 @@ package com.miku.minadevelop.modules.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
+import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Product;
+import com.miku.minadevelop.modules.entity.User;
+import com.miku.minadevelop.modules.pojo.ProductPoJo;
 import com.miku.minadevelop.modules.service.IProductService;
 import com.miku.minadevelop.modules.service.impl.ProductServiceImpl;
 import lombok.AllArgsConstructor;
@@ -21,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,8 +49,12 @@ public class ProductController {
     @Value("${minadevelop.fileurl}")
     public String fileUrl;
 
+    @Value("${minadevelop.weburl}")
+    private String webUrl;
+
     @PostMapping("/save")
     public Result saveProduct(@RequestBody Product product){
+
         System.out.println(product.getFileUrl());
         product.setProductId(6);
         product.setUid(6);
@@ -75,7 +86,7 @@ public class ProductController {
                //把zip保存到本地
 //               File file1 = zipFile.getFile();
                // 创建 ZipFile 对象，并设置输出路径和密码
-               String encryptedZipFilePath = unzipFile+"/" + split[1];
+               String encryptedZipFilePath = fileUrl +"product"+ split[1] ;
                ZipFile encryptedZipFile = new ZipFile(encryptedZipFilePath, password.toCharArray());
                // 创建 ZipParameters 对象，并设置压缩级别和加密方法
                ZipParameters zipParameters = new ZipParameters();
@@ -85,6 +96,7 @@ public class ProductController {
                // 添加文件到压缩包
                encryptedZipFile.addFile(file, zipParameters);
                product.setZipPsd(password);
+               product.setFileUrl(webUrl+"product"+ split[1]);
                System.out.println("文件已成功压缩并加密！");
                service.save(product);
                //把原来的文件删除
@@ -105,5 +117,29 @@ public class ProductController {
     public Result getProductById(String id){
         Product product = service.getById(id);
         return Result.ok(product);
+    }
+
+    /**
+     * 获取分页全部的product
+     * @param query
+     * @return
+     */
+    @GetMapping("/list")
+    public Result getList(CommonQuery query){
+        List<Product> list = service.list();
+        List<ProductPoJo> collect = list.stream().map(item -> {
+            return BeanUtil.copyProperties(item, ProductPoJo.class);
+        }).collect(Collectors.toList());
+        return Result.ok(collect);
+    }
+    /**
+     * 用户获取解压密码
+     */
+    @GetMapping("/getpsd/{pid}")
+    public Result getPsdByProId(@PathVariable("pid")String pid){
+        //通过登录的token获取用户id
+        Object loginId = StpUtil.getTokenInfo().getLoginId();
+        Product pro = service.getOne(Wrappers.<Product>lambdaQuery().eq(Product::getProductId, pid).eq(Product::getUid, loginId));
+        return Result.ok(pro.getZipPsd());
     }
 }

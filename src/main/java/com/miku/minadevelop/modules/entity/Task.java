@@ -28,7 +28,7 @@ public class Task implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("任务id")
-    @TableId(value = "task_id", type = IdType.AUTO)
+    @TableId(value = "task_id", type = IdType.ASSIGN_UUID)
     private Integer taskId;
 
     @ApiModelProperty("任务标题")
