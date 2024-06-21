@@ -2,6 +2,9 @@ package com.miku.minadevelop.modules.service;
 
 import com.miku.minadevelop.modules.entity.Product;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.miku.minadevelop.modules.pojo.ProductPoJo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IProductService extends IService<Product> {
 
+    void savezip(Product product);
+
+    List<ProductPoJo> getListByTagId(String tid);
 }

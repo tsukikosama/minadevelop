@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Product;
+import com.miku.minadevelop.modules.entity.Tag;
 import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.pojo.ProductPoJo;
 import com.miku.minadevelop.modules.service.IProductService;
@@ -46,68 +47,9 @@ public class ProductController {
 
     private final ProductServiceImpl service;
 
-    @Value("${minadevelop.fileurl}")
-    public String fileUrl;
-
-    @Value("${minadevelop.weburl}")
-    private String webUrl;
-
     @PostMapping("/save")
     public Result saveProduct(@RequestBody Product product){
-
-        System.out.println(product.getFileUrl());
-        product.setProductId(6);
-        product.setUid(6);
-        product.setProductTime(DateUtil.now());
-        product.setProductName("test");
-//        product.setCount(0);
-        product.setHasPsd(1);
-        File file ;
-        //判断是否需要加密
-        if (product.getHasPsd() > 0){
-            //需要加密的名字
-            String fileUrl1 = product.getFileUrl();
-            String[] split = fileUrl1.split("/upload/");
-            //读取本地的文件
-            String localFile = fileUrl + split[1];
-            String unzipFile = fileUrl + "unzip";
-            File dir = new File(unzipFile);
-            dir.mkdir();
-            //获取目标的文件
-            file =  new File(localFile);
-            //判断文件是否存在
-           try {
-               if (!file.exists()){
-                   log.info("文件不存在{}",product.getFileUrl());
-                   throw new FileNotFoundException("文件不存在");
-               }
-               //生成随机的压缩密码
-               String password = RandomUtil.randomString(10);
-               //把zip保存到本地
-//               File file1 = zipFile.getFile();
-               // 创建 ZipFile 对象，并设置输出路径和密码
-               String encryptedZipFilePath = fileUrl +"product"+ split[1] ;
-               ZipFile encryptedZipFile = new ZipFile(encryptedZipFilePath, password.toCharArray());
-               // 创建 ZipParameters 对象，并设置压缩级别和加密方法
-               ZipParameters zipParameters = new ZipParameters();
-               zipParameters.setCompressionLevel(CompressionLevel.NORMAL);
-               zipParameters.setEncryptFiles(true);
-               zipParameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
-               // 添加文件到压缩包
-               encryptedZipFile.addFile(file, zipParameters);
-               product.setZipPsd(password);
-               product.setFileUrl(webUrl+"product"+ split[1]);
-               System.out.println("文件已成功压缩并加密！");
-               service.save(product);
-               //把原来的文件删除
-               file.delete();
-           }catch (Exception e){
-                log.error("文件加密失败",e);
-                throw new RuntimeException("文件解压失败");
-           }
-
-         }
-
+        service.savezip(product);
         return Result.ok("提交成功");
     }
 
@@ -141,5 +83,11 @@ public class ProductController {
         Object loginId = StpUtil.getTokenInfo().getLoginId();
         Product pro = service.getOne(Wrappers.<Product>lambdaQuery().eq(Product::getProductId, pid).eq(Product::getUid, loginId));
         return Result.ok(pro.getZipPsd());
+    }
+
+    @GetMapping("/list/{tid}")
+    public Result getProductByTagId(@PathVariable("tid")String tid){
+        List<ProductPoJo> list = service.getListByTagId(tid);
+        return Result.ok(list);
     }
 }

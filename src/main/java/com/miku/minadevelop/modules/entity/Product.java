@@ -62,4 +62,8 @@ public class Product implements Serializable {
     @ApiModelProperty("商品价格")
     @TableField("product_price")
     private String productPrice;
+
+    @ApiModelProperty("标签id")
+    @TableField("tag_id")
+    private String tagId;
 }
