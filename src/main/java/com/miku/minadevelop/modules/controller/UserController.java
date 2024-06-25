@@ -11,6 +11,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
+import com.miku.minadevelop.common.exception.CustomException;
+import com.miku.minadevelop.common.exception.GlobalExceptionHandler;
 import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.pojo.CheckData;
 import com.miku.minadevelop.modules.pojo.UserPoJo;
@@ -80,8 +82,8 @@ public class UserController {
     /**
      * 通过用户id查询用户信息
      */
-    @GetMapping("/{id}")
-    public Result getUserInfoById(@PathVariable("id") Long id) {
+    @GetMapping("/{uid}")
+    public Result getUserInfoById(@PathVariable(value = "uid") Long id) {
         User user = userService.getById(id);
         UserPoJo pojo = BeanUtil.copyProperties(user,UserPoJo.class);
         if (pojo == null){
@@ -89,12 +91,33 @@ public class UserController {
         }
         return Result.ok(pojo);
     }
+
+    @PostMapping("/update/{uid}")
+    public Result updateUser(@PathVariable(value = "uid")Long uid){
+        if (BeanUtil.isEmpty(uid)){
+            log.info("当前更新的用户uid为:{}",uid);
+            throw new CustomException("数据库中不存在改用户id");
+        }
+        //判断数据库中是否存在改u用户
+        User user = userService.getById(uid);
+        if (BeanUtil.isEmpty(user)){
+            log.info("用户:{} 不存在数据库中",uid);
+            throw new CustomException("参数异常");
+        }
+        return Result.ok(user);
+    }
     /**
      * 注册
      */
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
-        return Result.ok();
+        boolean save = userService.save(user);
+        if (!save){
+            log.info("保存用户信息异常：{}",user);
+            throw new CustomException("参数异常");
+
+        }
+        return Result.ok("注册成功");
     }
 
     /**
@@ -144,5 +167,29 @@ public class UserController {
         return match;
     }
 
+    /**
+     * 通过token获取用户
+     * @param token
+     * @return
+     */
+    @GetMapping("/get")
+    public Result getUserByUid(@PathVariable(value = "token") Integer token){
+        if (BeanUtil.isEmpty(token)){
+            log.info("当前查询的用户id为:{}",token);
+            throw new CustomException("参数有误");
+        }
+
+        String tokenValue = StpUtil.getTokenValue();
+        Object loginId = StpUtil.getLoginId();
+        if (!tokenValue.equals(tokenValue)){
+            log.info("当前用户的token为:{}",token);
+            //把当前的账号踢下线
+            StpUtil.logout(loginId);
+            throw new CustomException("token异常");
+        }
+
+        User byId = userService.getById((Long)loginId);
+        return Result.ok(byId);
+    }
 
 }
