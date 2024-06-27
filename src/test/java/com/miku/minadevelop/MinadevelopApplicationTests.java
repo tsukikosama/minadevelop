@@ -13,4 +13,9 @@ class MinadevelopApplicationTests {
         System.out.println(s);
     }
 
+    @Test
+    void test(){
+        System.out.println(1^1);
+    }
+
 }

@@ -62,4 +62,6 @@ public class FileController {
     public String img() {
         return "普通的图片上传";
     }
+
+
 }

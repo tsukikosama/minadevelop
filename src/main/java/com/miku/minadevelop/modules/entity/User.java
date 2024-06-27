@@ -58,7 +58,7 @@ public class User implements Serializable {
 
     @ApiModelProperty("用户状态 0 正常 1 异常")
     @TableField("status")
-    private Boolean status;
+    private Integer status;
 
 
 }

@@ -9,6 +9,7 @@ import cloud.tianai.captcha.spring.vo.ImageCaptchaVO;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.exception.CustomException;
@@ -25,6 +26,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -59,10 +61,11 @@ public class UserController {
         System.out.println(user);
         User one = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, user.getAccount()));
         System.out.println(one);
+
         if (one == null) {
             return Result.fail("账号不存在",406);
         }
-        if (!one.getPassword().equals(user.getPassword())){
+        if (!one.getPassword().equals(SecureUtil.md5(user.getPassword()))){
             return Result.fail("密码错误",406);
         }
         /**
@@ -111,6 +114,7 @@ public class UserController {
      */
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
+        user.setPassword(SecureUtil.md5(user.getPassword()));
         boolean save = userService.save(user);
         if (!save){
             log.info("保存用户信息异常：{}",user);
@@ -178,7 +182,6 @@ public class UserController {
             log.info("当前查询的用户id为:{}",token);
             throw new CustomException("参数有误");
         }
-
         String tokenValue = StpUtil.getTokenValue();
         Object loginId = StpUtil.getLoginId();
         if (!tokenValue.equals(tokenValue)){
@@ -187,9 +190,31 @@ public class UserController {
             StpUtil.logout(loginId);
             throw new CustomException("token异常");
         }
-
         User byId = userService.getById((Long)loginId);
         return Result.ok(byId);
+    }
+
+    /**
+     * 重置用户密码
+     * @param uid
+     * @return
+     */
+    @PostMapping("/reset/{uid}")
+    public Result resetUser(@PathVariable Integer uid){
+        userService.resetUser(uid);
+        return Result.ok("修改成功");
+    }
+
+    /**
+     * 账号的解禁和禁用
+     * @return
+     */
+    @PostMapping("/ban")
+    public Result Ban(){
+        Object loginId = StpUtil.getLoginId();
+        User user = userService.getById((Serializable) loginId);
+        user.setStatus(user.getStatus()^1);
+        return Result.ok("修改成功");
     }
 
 }

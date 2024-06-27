@@ -14,13 +14,9 @@ public class CommonQuery {
      */
     private Integer pageNum;
     /**
-     * 每页数据
+     * 每页大小
      */
     private Integer pageSize;
-    /**
-     * 总数
-     */
-    private Integer totalCount;
     /**
      * 总页数
      */

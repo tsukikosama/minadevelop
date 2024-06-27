@@ -85,9 +85,26 @@ public class ProductController {
         return Result.ok(pro.getZipPsd());
     }
 
+    /**
+     * 通过tagid获取对应的商品
+     * @param tid
+     * @return
+     */
     @GetMapping("/list/{tid}")
     public Result getProductByTagId(@PathVariable("tid")String tid){
         List<ProductPoJo> list = service.getListByTagId(tid);
         return Result.ok(list);
     }
+
+    /**
+     * 查询商品详情
+     * @param pid
+     * @return
+     */
+    @GetMapping("/{pid}")
+    public Result getProductDetail(@PathVariable("pid") Integer pid){
+        return Result.ok(service.getById(pid));
+    }
+
+
 }
