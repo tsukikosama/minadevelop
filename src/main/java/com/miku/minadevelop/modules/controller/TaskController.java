@@ -4,6 +4,7 @@ package com.miku.minadevelop.modules.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.modules.entity.Task;
+import com.miku.minadevelop.modules.service.ITaskService;
 import com.miku.minadevelop.modules.service.impl.TaskServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskServiceImpl taskService;
+    private final ITaskService taskService;
 
     /**
      * 获取全部的任务

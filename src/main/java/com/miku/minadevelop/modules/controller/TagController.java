@@ -4,6 +4,7 @@ package com.miku.minadevelop.modules.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.modules.entity.Tag;
+import com.miku.minadevelop.modules.service.ITagService;
 import com.miku.minadevelop.modules.service.impl.TagServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequestMapping("/tag")
 @RequiredArgsConstructor
 public class TagController {
-    private final TagServiceImpl tagService;
+    private final ITagService tagService;
 
     /**
      * 获取全部的list

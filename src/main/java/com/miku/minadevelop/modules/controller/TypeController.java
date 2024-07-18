@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.exception.CustomException;
 import com.miku.minadevelop.modules.entity.Type;
+import com.miku.minadevelop.modules.service.ITypeService;
 import com.miku.minadevelop.modules.service.impl.TypeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class TypeController {
 
-    private final TypeServiceImpl typeService;
+    private final ITypeService typeService;
     /**
      * 获取type列表
      * @return

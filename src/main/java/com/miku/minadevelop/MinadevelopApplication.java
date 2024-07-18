@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 //配置包扫描
-@MapperScan(value = "com.miku.minadevelop.***")
 @Slf4j
 public class MinadevelopApplication {
 

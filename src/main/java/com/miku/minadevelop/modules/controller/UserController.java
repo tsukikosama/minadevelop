@@ -17,6 +17,7 @@ import com.miku.minadevelop.common.exception.GlobalExceptionHandler;
 import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.pojo.CheckData;
 import com.miku.minadevelop.modules.pojo.UserPoJo;
+import com.miku.minadevelop.modules.service.IUserService;
 import com.miku.minadevelop.modules.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +49,7 @@ public class UserController {
 
     private final ImageCaptchaApplication application;
 
-    private final UserServiceImpl userService;
+    private final IUserService userService;
     /**
      * 登录
      * @Captcha 开启验证码验证
