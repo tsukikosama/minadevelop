@@ -34,7 +34,7 @@ spring:
         #??????
     timeout: 10000
 server:
-  port: 8090
+  port: 8099
   servlet:
     multipart:
       enabled: true

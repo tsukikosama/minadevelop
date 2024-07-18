@@ -3,12 +3,16 @@ package com.miku.minadevelop.modules.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Product;
 import com.miku.minadevelop.modules.mapper.ProductMapper;
 import com.miku.minadevelop.modules.pojo.ProductPoJo;
 import com.miku.minadevelop.modules.service.IProductService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements IProductService {
 
     @Value("${minadevelop.fileurl}")
@@ -105,5 +110,13 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
             return BeanUtil.copyProperties(item, ProductPoJo.class);
         }).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public Page<ProductPoJo> mypage(CommonQuery query) {
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
+
+//        this.baseMapper.getPage()
+        return null;
     }
 }

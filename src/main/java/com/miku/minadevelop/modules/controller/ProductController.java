@@ -5,7 +5,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Product;
@@ -45,11 +47,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProductController {
 
-    private final ProductServiceImpl service;
+    private final IProductService productService;
 
     @PostMapping("/save")
     public Result saveProduct(@RequestBody Product product){
-        service.savezip(product);
+        productService.savezip(product);
         return Result.ok("提交成功");
     }
 
@@ -57,7 +59,7 @@ public class ProductController {
      *通过productid 查询对应的文件路径
      */
     public Result getProductById(String id){
-        Product product = service.getById(id);
+        Product product = productService.getById(id);
         return Result.ok(product);
     }
 
@@ -68,11 +70,13 @@ public class ProductController {
      */
     @GetMapping("/list")
     public Result getList(CommonQuery query){
-        List<Product> list = service.list();
-        List<ProductPoJo> collect = list.stream().map(item -> {
-            return BeanUtil.copyProperties(item, ProductPoJo.class);
-        }).collect(Collectors.toList());
-        return Result.ok(collect);
+        System.out.println(query);
+//        List<Product> list = service.list();
+//        List<ProductPoJo> collect = list.stream().map(item -> {
+//            return BeanUtil.copyProperties(item, ProductPoJo.class);
+//        }).collect(Collectors.toList());
+        Page<Product> page = productService.page(new Page<>(query.getCurrent(), query.getPageSize()));
+        return Result.ok(page);
     }
     /**
      * 用户获取解压密码
@@ -81,7 +85,7 @@ public class ProductController {
     public Result getPsdByProId(@PathVariable("pid")String pid){
         //通过登录的token获取用户id
         Object loginId = StpUtil.getTokenInfo().getLoginId();
-        Product pro = service.getOne(Wrappers.<Product>lambdaQuery().eq(Product::getProductId, pid).eq(Product::getUid, loginId));
+        Product pro = productService.getOne(Wrappers.<Product>lambdaQuery().eq(Product::getProductId, pid).eq(Product::getUid, loginId));
         return Result.ok(pro.getZipPsd());
     }
 
@@ -92,7 +96,7 @@ public class ProductController {
      */
     @GetMapping("/list/{tid}")
     public Result getProductByTagId(@PathVariable("tid")String tid){
-        List<ProductPoJo> list = service.getListByTagId(tid);
+        List<ProductPoJo> list = productService.getListByTagId(tid);
         return Result.ok(list);
     }
 
@@ -103,8 +107,10 @@ public class ProductController {
      */
     @GetMapping("/{pid}")
     public Result getProductDetail(@PathVariable("pid") Integer pid){
-        return Result.ok(service.getById(pid));
+        return Result.ok(productService.getById(pid));
     }
+
+
 
 
 }

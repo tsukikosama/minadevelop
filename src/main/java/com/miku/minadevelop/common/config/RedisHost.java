@@ -1,4 +1,4 @@
-package com.miku.minadevelop.modules.config;
+package com.miku.minadevelop.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 

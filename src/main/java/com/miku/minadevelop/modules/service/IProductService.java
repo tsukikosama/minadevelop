@@ -1,5 +1,7 @@
 package com.miku.minadevelop.modules.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Product;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.miku.minadevelop.modules.pojo.ProductPoJo;
@@ -19,4 +21,6 @@ public interface IProductService extends IService<Product> {
     void savezip(Product product);
 
     List<ProductPoJo> getListByTagId(String tid);
+
+    Page<ProductPoJo> mypage(CommonQuery query);
 }

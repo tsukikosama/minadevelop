@@ -19,6 +19,7 @@ import com.miku.minadevelop.modules.pojo.CheckData;
 import com.miku.minadevelop.modules.pojo.UserPoJo;
 import com.miku.minadevelop.modules.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -217,4 +218,12 @@ public class UserController {
         return Result.ok("修改成功");
     }
 
+    /**
+     * 获取全部的user
+     * @return
+     */
+    @GetMapping("/list")
+    public Result list(){
+        return Result.ok(userService.list());
+    }
 }

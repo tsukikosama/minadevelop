@@ -1,4 +1,4 @@
-package com.miku.minadevelop.modules.status;
+package com.miku.minadevelop.modules.enums;
 
 public enum OrderStatusMenu {
     UN_PAY(1),

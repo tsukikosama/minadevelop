@@ -12,7 +12,7 @@ public class CommonQuery {
     /**
      * 当前页数
      */
-    private Integer pageNum;
+    private Integer current;
     /**
      * 每页大小
      */
@@ -20,6 +20,6 @@ public class CommonQuery {
     /**
      * 总页数
      */
-    private Integer totalPages;
+    private Integer total;
 
 }

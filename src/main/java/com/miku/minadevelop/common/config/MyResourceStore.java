@@ -1,4 +1,4 @@
-package com.miku.minadevelop.modules.config;
+package com.miku.minadevelop.common.config;
 
 import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
 import cloud.tianai.captcha.generator.common.constant.SliderCaptchaConstant;

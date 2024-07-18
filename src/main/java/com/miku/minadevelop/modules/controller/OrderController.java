@@ -5,6 +5,7 @@ import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.exception.CustomException;
 import com.miku.minadevelop.common.page.CommonQuery;
 import com.miku.minadevelop.modules.entity.Order;
+import com.miku.minadevelop.modules.service.IOrderService;
 import com.miku.minadevelop.modules.service.impl.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ import java.util.Map;
 @Slf4j
 public class OrderController {
 
-    private final OrderServiceImpl orderService;
+    private final IOrderService orderService;
 
     /**
      * 查询用户对应的订单
@@ -93,5 +94,6 @@ public class OrderController {
     public Result refund(@RequestParam("oid")Integer oid){
         return Result.ok();
     }
+
 
 }
