@@ -17,7 +17,7 @@ import lombok.Setter;
  * </p>
  *
  * @author miku
- * @since 2024-06-13
+ * @since 2024-07-19
  */
 @Getter
 @Setter
@@ -27,8 +27,12 @@ public class Task implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     @ApiModelProperty("任务id")
-    @TableId(value = "task_id", type = IdType.ASSIGN_UUID)
+    @TableField("task_id")
     private Integer taskId;
 
     @ApiModelProperty("任务标题")
@@ -45,11 +49,11 @@ public class Task implements Serializable {
 
     @ApiModelProperty("发布时间")
     @TableField("create_datetime")
-    private String createDatetime;
+    private LocalDateTime createDatetime;
 
     @ApiModelProperty("更新时间")
-    @TableField("task_updatetime")
-    private String taskUpdatetime;
+    @TableField("update_time")
+    private LocalDateTime updateTime;
 
     @ApiModelProperty("任务状态 0正常 1 结束")
     @TableField("status")
@@ -60,8 +64,6 @@ public class Task implements Serializable {
     private Boolean isDelete;
 
     @ApiModelProperty("发布人id")
-    @TableField("uid")
-    private Integer uid;
-
-
+    @TableField("user_id")
+    private Integer userId;
 }

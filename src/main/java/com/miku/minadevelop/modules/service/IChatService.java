@@ -1,6 +1,6 @@
 package com.miku.minadevelop.modules.service;
 
-import com.miku.minadevelop.modules.entity.MessageContent;
+import com.miku.minadevelop.modules.entity.Chat;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author miku
- * @since 2024-07-18
+ * @since 2024-07-19
  */
-public interface IMessageContentService extends IService<MessageContent> {
+public interface IChatService extends IService<Chat> {
 
 }

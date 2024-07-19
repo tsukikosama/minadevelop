@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author miku
- * @since 2024-07-18
+ * @since 2024-07-19
  */
 @Service
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements IMessageService {

@@ -17,7 +17,7 @@ import lombok.Setter;
  * </p>
  *
  * @author miku
- * @since 2024-07-18
+ * @since 2024-07-19
  */
 @Getter
 @Setter
@@ -27,15 +27,31 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("用户消息的id")
-    @TableId(value = "message_id", type = IdType.AUTO)
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
+    @ApiModelProperty("消息id")
+    @TableField("message_id")
     private Integer messageId;
 
-    @ApiModelProperty("用户的uid 用,隔开 代表两个用户的聊天")
-    @TableField("message_user")
-    private String messageUser;
+    @ApiModelProperty("发送者的id")
+    @TableField("send_id")
+    private Integer sendId;
 
-    @ApiModelProperty("用户聊天创建的时间")
+    @ApiModelProperty("接受者的id")
+    @TableField("receiver_id")
+    private Integer receiverId;
+
+    @ApiModelProperty("消息内容")
+    @TableField("content")
+    private String content;
+
+    @ApiModelProperty("发送消息的时间")
     @TableField("create_time")
     private LocalDateTime createTime;
+
+    @ApiModelProperty("消息状态1已读 2 未读")
+    @TableField("status")
+    private Boolean status;
 }

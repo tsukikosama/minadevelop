@@ -1,6 +1,6 @@
 package com.miku.minadevelop.modules.mapper;
 
-import com.miku.minadevelop.modules.entity.MessageContent;
+import com.miku.minadevelop.modules.entity.Chat;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author miku
- * @since 2024-07-18
+ * @since 2024-07-19
  */
-public interface MessageContentMapper extends BaseMapper<MessageContent> {
+public interface ChatMapper extends BaseMapper<Chat> {
 
 }

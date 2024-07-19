@@ -2,12 +2,13 @@ package com.miku.minadevelop.modules.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.miku.minadevelop.common.Result;
-import com.miku.minadevelop.modules.entity.MessageContent;
+import com.miku.minadevelop.modules.enums.MessageStatusEnum;
 import com.miku.minadevelop.modules.request.MessageReq;
-import com.miku.minadevelop.modules.service.IMessageContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -22,16 +23,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MessageContentController {
 
-
-    private final IMessageContentService messageContentService;
-
-    @PostMapping("/send")
-    public Result sendMsg(@RequestBody @Validated MessageReq messageReq){
-        System.out.println(messageReq);
-        MessageContent messageContent = BeanUtil.copyProperties(messageReq, MessageContent.class);
-
-        return Result.ok();
-    }
 
 
 

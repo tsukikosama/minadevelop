@@ -17,7 +17,7 @@ import lombok.Setter;
  * </p>
  *
  * @author miku
- * @since 2024-06-13
+ * @since 2024-07-19
  */
 @Getter
 @Setter
@@ -27,8 +27,12 @@ public class Tag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     @ApiModelProperty("主键")
-    @TableId(value = "tag_id", type = IdType.AUTO)
+    @TableField("tag_id")
     private Integer tagId;
 
     @ApiModelProperty("类型的id")
@@ -41,7 +45,5 @@ public class Tag implements Serializable {
 
     @ApiModelProperty("更新时间")
     @TableField("create_time")
-    private String createTime;
-
-
+    private LocalDateTime createTime;
 }

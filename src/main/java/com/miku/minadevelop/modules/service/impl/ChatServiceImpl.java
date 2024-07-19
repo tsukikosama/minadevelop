@@ -1,8 +1,8 @@
 package com.miku.minadevelop.modules.service.impl;
 
-import com.miku.minadevelop.modules.entity.User;
-import com.miku.minadevelop.modules.mapper.UserMapper;
-import com.miku.minadevelop.modules.service.IUserService;
+import com.miku.minadevelop.modules.entity.Chat;
+import com.miku.minadevelop.modules.mapper.ChatMapper;
+import com.miku.minadevelop.modules.service.IChatService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-07-19
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IChatService {
 
 }

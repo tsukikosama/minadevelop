@@ -21,9 +21,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("cc_type")
-@ApiModel(value = "Type对象", description = "")
-public class Type implements Serializable {
+@TableName("cc_chat")
+@ApiModel(value = "Chat对象", description = "")
+public class Chat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,15 +31,19 @@ public class Type implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("typeid")
-    @TableField("type_id")
-    private Integer typeId;
+    @ApiModelProperty("发送用户的id")
+    @TableField("send_uid")
+    private Integer sendUid;
 
-    @ApiModelProperty("类型名")
-    @TableField("type_name")
-    private String typeName;
+    @ApiModelProperty("接收用户的id")
+    @TableField("receiver_uid")
+    private Integer receiverUid;
 
-    @ApiModelProperty("更新时间")
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    @ApiModelProperty("发送时间")
+    @TableField("update_time")
+    private LocalDateTime updateTime;
+
+    @ApiModelProperty("最后一条消息的id")
+    @TableField("last_message_id")
+    private Integer lastMessageId;
 }

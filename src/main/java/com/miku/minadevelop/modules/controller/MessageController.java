@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author miku
- * @since 2024-07-18
+ * @since 2024-07-19
  */
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/modules/message")
 public class MessageController {
 
 }

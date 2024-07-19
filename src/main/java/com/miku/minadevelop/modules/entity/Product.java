@@ -17,7 +17,7 @@ import lombok.Setter;
  * </p>
  *
  * @author miku
- * @since 2024-06-19
+ * @since 2024-07-19
  */
 @Getter
 @Setter
@@ -27,43 +27,39 @@ public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     @ApiModelProperty("主键")
-    @TableId(value = "product_id", type = IdType.ASSIGN_UUID)
+    @TableField("product_id")
     private Integer productId;
 
-    @ApiModelProperty("商品名")
+    @ApiModelProperty("商品名字")
     @TableField("product_name")
     private String productName;
 
-    @ApiModelProperty("发布时间")
-    @TableField("product_time")
-    private String productTime;
+    @ApiModelProperty("时间")
+    @TableField("create_time")
+    private LocalDateTime createTime;
 
     @ApiModelProperty("用户id")
-    @TableField("uid")
-    private Integer uid;
+    @TableField("user_id")
+    private Integer userId;
 
-    @ApiModelProperty("购买次数")
+    @ApiModelProperty("下载次数")
     @TableField("count")
     private Integer count;
 
-    @ApiModelProperty("是否有压缩密码")
-    @TableField("has_psd")
-    private Integer hasPsd;
-
-    @ApiModelProperty("压缩包密码")
+    @ApiModelProperty("解压密码")
     @TableField("zip_psd")
     private String zipPsd;
 
-    @ApiModelProperty("文件地址")
+    @ApiModelProperty("是否需要解压密码 0为不需要 1为需要")
+    @TableField("has_psd")
+    private Boolean hasPsd;
+
+    @ApiModelProperty("文件路径")
     @TableField("file_url")
     private String fileUrl;
-
-    @ApiModelProperty("商品价格")
-    @TableField("product_price")
-    private String productPrice;
-
-    @ApiModelProperty("标签id")
-    @TableField("tag_id")
-    private String tagId;
 }

@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,20 +17,23 @@ import lombok.Setter;
  * </p>
  *
  * @author miku
- * @since 2024-06-13
+ * @since 2024-07-19
  */
 @Getter
 @Setter
 @TableName("cc_user")
-@Data
 @ApiModel(value = "User对象", description = "")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     @ApiModelProperty("用户id")
-    @TableId(value = "uid", type = IdType.ASSIGN_UUID)
-    private Integer uid;
+    @TableField("user_id")
+    private Integer userId;
 
     @ApiModelProperty("用户账号")
     @TableField("account")
@@ -56,9 +59,7 @@ public class User implements Serializable {
     @TableField("is_valid")
     private Integer isValid;
 
-    @ApiModelProperty("用户状态 0 正常 1 异常")
-    @TableField("status")
-    private Integer status;
-
-
+    @ApiModelProperty("创建时间")
+    @TableField("create_time")
+    private LocalDateTime createTime;
 }
