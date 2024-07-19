@@ -22,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("cc_chat")
-@ApiModel(value = "Chat对象", description = "")
+@ApiModel(value = "Chat对象", description = "Chat对象")
 public class Chat implements Serializable {
 
     private static final long serialVersionUID = 1L;

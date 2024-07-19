@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -23,7 +25,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("cc_order")
-@ApiModel(value = "Order对象", description = "")
+@ApiModel(value = "Order对象", description = "order")
+@Api("订单对象")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;

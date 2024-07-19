@@ -49,15 +49,13 @@ public class CodeGenerator {
                 .strategyConfig(builder -> {
                     builder.addTablePrefix("cc_") // 设置需要生成的表名
                             .entityBuilder()
-                            .enableFileOverride()//开启文件覆盖
                             .enableLombok()
                             .idType(IdType.AUTO) // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解
                             .controllerBuilder()
-                            .enableRestStyle() // 启用 REST 风格
-                            ;
+                            .enableRestStyle(); // 启用 REST 风格
                 })
-                .templateEngine(new FreemarkerTemplateEngine())// 使用 Freemarker 模板引擎
+                .templateEngine(new FreemarkerTemplateEngine()) // 使用 Freemarker 模板引擎
                 .execute(); // 执行生成
     }
 }

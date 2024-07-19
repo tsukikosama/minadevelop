@@ -19,6 +19,9 @@ import com.miku.minadevelop.modules.pojo.CheckData;
 import com.miku.minadevelop.modules.pojo.UserPoJo;
 import com.miku.minadevelop.modules.service.IUserService;
 import com.miku.minadevelop.modules.service.impl.UserServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +46,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
+@Api("用户接口")
 public class UserController {
 
     private final StringRedisTemplate redisTemplate;
@@ -59,7 +63,8 @@ public class UserController {
 
 //    @Captcha("SLIDER")
     @PostMapping("/login/{rememberMe}")
-    public Result login(@RequestBody User user,@PathVariable(value = "rememberMe",required = false) boolean rememberMe) {
+    @ApiOperation("登录功能")
+    public Result login(@RequestBody User user,@ApiParam("是否记住密码") @PathVariable(value = "rememberMe",required = false) boolean rememberMe) {
         System.out.println(user);
         User one = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, user.getAccount()));
         System.out.println(one);

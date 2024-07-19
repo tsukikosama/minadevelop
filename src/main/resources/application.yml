@@ -33,6 +33,9 @@ spring:
         max-active: 8
         #??????
     timeout: 10000
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 server:
   port: 8099
   servlet:
@@ -71,24 +74,24 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
-knife4j:
-  enable: true
-  openapi:
-    title: Knife4j官方文档
-    description: "`我是测试`,**你知道吗**# aaa"
-    email: xiaoymin@foxmail.com
-    concat: weilai
-    url: https://docs.xiaominfo.com
-    version: v4.0
-    license: Apache 2.0
-    license-url: https://stackoverflow.com/
-    terms-of-service-url: https://stackoverflow.com/
-    group:
-      test1:
-        group-name: 分组名称
-        api-rule: package
-        api-rule-resources:
-          - com.weilai.fastdevelop.controller
+#knife4j:
+#  enable: true
+#  openapi:
+#    title: Knife4j官方文档
+#    description: "`我是测试`,**你知道吗**# aaa"
+#    email: xiaoymin@foxmail.com
+#    concat: weilai
+#    url: https://docs.xiaominfo.com
+#    version: v4.0
+#    license: Apache 2.0
+#    license-url: https://stackoverflow.com/
+#    terms-of-service-url: https://stackoverflow.com/
+#    group:
+#      test1:
+#        group-name: 分组名称
+#        api-rule: package
+#        api-rule-resources:
+#          - com.miku.minadevelop.modules
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
   # token 名称（同时也是 cookie 名称）
