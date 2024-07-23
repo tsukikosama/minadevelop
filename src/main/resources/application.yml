@@ -36,6 +36,7 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
 server:
   port: 8099
   servlet:
@@ -74,6 +75,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #knife4j:
 #  enable: true
 #  openapi:

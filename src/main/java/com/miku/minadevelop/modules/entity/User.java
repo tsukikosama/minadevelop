@@ -23,6 +23,7 @@ import lombok.Setter;
 @Setter
 @TableName("cc_user")
 @ApiModel(value = "User对象", description = "")
+
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,4 +63,19 @@ public class User implements Serializable {
     @ApiModelProperty("创建时间")
     @TableField("create_time")
     private LocalDateTime createTime;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", account='" + account + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", isValid=" + isValid +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

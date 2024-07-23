@@ -10,6 +10,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.common.exception.CustomException;
@@ -17,6 +18,7 @@ import com.miku.minadevelop.common.exception.GlobalExceptionHandler;
 import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.pojo.CheckData;
 import com.miku.minadevelop.modules.pojo.UserPoJo;
+import com.miku.minadevelop.modules.response.UserResponse;
 import com.miku.minadevelop.modules.service.IUserService;
 import com.miku.minadevelop.modules.service.impl.UserServiceImpl;
 import io.swagger.annotations.Api;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -66,7 +69,11 @@ public class UserController {
     @ApiOperation("登录功能")
     public Result login(@RequestBody User user,@ApiParam("是否记住密码") @PathVariable(value = "rememberMe",required = false) boolean rememberMe) {
         System.out.println(user);
+        System.out.println("66");
+
         User one = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, user.getAccount()));
+        List<User> list = userService.list();
+        System.out.println(list.size());
         System.out.println(one);
 
         if (one == null) {
@@ -79,9 +86,9 @@ public class UserController {
          * 判断用户是否勾选了记住我的选项
          */
         if (rememberMe) {
-            StpUtil.login(one.getUserId(),true);
+            StpUtil.login(one.getId(),true);
         }
-        StpUtil.login(one.getUserId(),false);
+        StpUtil.login(one.getId(),false);
         /**
          * 获取token数据
          */
@@ -95,7 +102,7 @@ public class UserController {
     @GetMapping("/{uid}")
     public Result getUserInfoById(@PathVariable(value = "uid") Long id) {
         User user = userService.getById(id);
-        UserPoJo pojo = BeanUtil.copyProperties(user,UserPoJo.class);
+        UserResponse pojo = BeanUtil.copyProperties(user,UserResponse.class);
         if (pojo == null){
             return Result.fail("用户不存在",406);
         }

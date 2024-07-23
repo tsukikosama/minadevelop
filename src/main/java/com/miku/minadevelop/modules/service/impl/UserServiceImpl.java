@@ -1,5 +1,6 @@
 package com.miku.minadevelop.modules.service.impl;
 
+import cn.hutool.crypto.SecureUtil;
 import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.mapper.UserMapper;
 import com.miku.minadevelop.modules.service.IUserService;
@@ -21,7 +22,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void resetUser(Integer uid) {
         User u = new User();
         u.setUserId(uid);
-        u.setPassword("123456");
+        u.setPassword(SecureUtil.md5("123456"));
         this.save(u);
     }
 }

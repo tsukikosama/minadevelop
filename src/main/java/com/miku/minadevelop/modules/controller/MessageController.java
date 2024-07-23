@@ -1,5 +1,8 @@
 package com.miku.minadevelop.modules.controller;
 
+import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-07-19
  */
 @RestController
-@RequestMapping("/modules/message")
+@RequestMapping("/message")
+@RequiredArgsConstructor
+@Slf4j
+@Api("发送消息接口")
 public class MessageController {
 
 }
