@@ -158,6 +158,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             message.setContent(content);
             message.setStatus(2);
             messageService.save(message);
+            return;
         }
 
         try {

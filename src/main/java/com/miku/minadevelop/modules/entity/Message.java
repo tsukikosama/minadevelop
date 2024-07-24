@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("cc_message")
+@Data
 @ApiModel(value = "Message对象", description = "")
 public class Message implements Serializable {
 
@@ -46,7 +48,7 @@ public class Message implements Serializable {
     private String content;
 
     @ApiModelProperty("发送消息的时间")
-    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    @TableField(value = "create_time",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime createTime;
     @ApiModelProperty("消息状态1已读 2 未读")
     @TableField("status")

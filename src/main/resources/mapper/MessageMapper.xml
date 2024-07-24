@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.minadevelop.modules.mapper.MessageMapper">
-
+    <select id="selectMessage" resultType="com.miku.minadevelop.modules.entity.Message">
+        SELECT *
+        FROM cc_message
+        WHERE receiver_id = ${uid}
+          and status = 2
+          and send_id
+            IN (SELECT DISTINCT send_id FROM cc_message)
+        ORDER BY send_id, create_time
+    </select>
 </mapper>
