@@ -2,6 +2,7 @@ package com.miku.minadevelop.modules.mapper;
 
 import com.miku.minadevelop.modules.entity.Message;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.miku.minadevelop.modules.response.MessageEntityResp;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  */
 public interface MessageMapper extends BaseMapper<Message> {
 
-    List<Message> selectMessage(Integer uid);
+    List<MessageEntityResp> selectMessage(Integer uid);
 
+    List<MessageEntityResp> selectMessageList(Integer chatId);
 }

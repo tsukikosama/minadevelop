@@ -1,5 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.minadevelop.modules.mapper.ChatMapper">
+    <select id="findUserMessage" resultType="com.miku.minadevelop.modules.response.MessageEntityResp">
+        SELECT u.account,
+               u.nickname,
+               u.id,
+               msg.id            as messageId,
+               msg.content       as content,
+               msg.create_time   as createTime,
+               chat.id           AS chatId,
+               msg.receiver_uid as receiverUid,
+               msg.send_uid     as sendUid,
+               send.nickname     AS sendNickname,
+               receiver.nickname AS receiverNickname
+        FROM cc_user u
+                 JOIN
+             cc_chat chat ON (chat.send_uid = u.user_id OR chat.receiver_uid = u.user_id)
+                 LEFT JOIN
+             cc_message msg ON chat.id = msg.chat_id
+                 LEFT JOIN
+             cc_user send ON chat.send_uid = send.user_id
+                 LEFT JOIN
+             cc_user receiver ON chat.receiver_uid = receiver.user_id
+        WHERE u.user_id = ${uid};
+    </select>
 
+    <update id="updetaLastMessageId">
+        UPDATE cc_chat
+        SET last_message_id = (
+            SELECT subquery.latest_message_id
+            FROM (
+                     SELECT cc_chat.id, cc_message.id AS latest_message_id
+                     FROM cc_chat
+                              LEFT JOIN cc_message ON cc_chat.id = cc_message.chat_id
+                     ORDER BY cc_message.create_time DESC
+                         LIMIT 1
+                 ) AS subquery
+            WHERE cc_chat.id = subquery.id
+        ) where cc_chat.id = ${chatId};
+    </update>
 </mapper>

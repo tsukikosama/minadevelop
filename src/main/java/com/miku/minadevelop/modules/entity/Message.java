@@ -29,19 +29,19 @@ public class Message implements Serializable {
 
     @ApiModelProperty("id")
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty("消息id")
-    @TableField("message_id")
-    private Integer messageId;
+    @TableField(value = "message_id")
+    private Long messageId;
 
     @ApiModelProperty("发送者的id")
-    @TableField("send_id")
-    private Integer sendId;
+    @TableField("send_uid")
+    private Long sendUid;
 
     @ApiModelProperty("接受者的id")
-    @TableField("receiver_id")
-    private Integer receiverId;
+    @TableField("receiver_uid")
+    private Long receiverUid;
 
     @ApiModelProperty("消息内容")
     @TableField("content")
@@ -53,4 +53,8 @@ public class Message implements Serializable {
     @ApiModelProperty("消息状态1已读 2 未读")
     @TableField("status")
     private Integer status;
+
+    @ApiModelProperty("聊天关系的id")
+    @TableField("chat_id")
+    private Long chatId;
 }

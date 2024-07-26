@@ -1,9 +1,7 @@
 package com.miku.minadevelop.modules.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -40,7 +38,7 @@ public class Order implements Serializable {
     private Integer orderId;
 
     @ApiModelProperty("订单创建时间")
-    @TableField("create_time")
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @ApiModelProperty("订单支付时间")
@@ -68,6 +66,6 @@ public class Order implements Serializable {
     private Boolean isDelete;
 
     @ApiModelProperty("更新时间")
-    @TableField("update_time")
+    @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 }

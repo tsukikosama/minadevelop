@@ -1,9 +1,7 @@
 package com.miku.minadevelop.modules.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
@@ -28,22 +26,22 @@ public class Chat implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("id")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    private Long id;
 
     @ApiModelProperty("发送用户的id")
     @TableField("send_uid")
-    private Integer sendUid;
+    private Long sendUid;
 
     @ApiModelProperty("接收用户的id")
     @TableField("receiver_uid")
-    private Integer receiverUid;
+    private Long receiverUid;
 
     @ApiModelProperty("发送时间")
-    @TableField("update_time")
+    @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     @ApiModelProperty("最后一条消息的id")
     @TableField("last_message_id")
-    private Integer lastMessageId;
+    private Long lastMessageId;
 }

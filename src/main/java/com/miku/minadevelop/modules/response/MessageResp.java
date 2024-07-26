@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 public class MessageResp {
-    private String id;
-
-    private List<Message> list;
-
+    private String chatId;
+    private String ChatNickname;
+    private Long ChatUid;
+    private List<MessageEntityResp> list;
 }

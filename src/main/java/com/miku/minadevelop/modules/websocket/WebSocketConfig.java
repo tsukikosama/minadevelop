@@ -28,7 +28,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
                         return true;
                     }
-
                     @Override
                     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
 

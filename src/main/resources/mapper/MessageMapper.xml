@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.minadevelop.modules.mapper.MessageMapper">
-    <select id="selectMessage" resultType="com.miku.minadevelop.modules.entity.Message">
-        SELECT *
-        FROM cc_message
-        WHERE receiver_id = ${uid}
-          and status = 2
-          and send_id
-            IN (SELECT DISTINCT send_id FROM cc_message)
-        ORDER BY send_id, create_time
+<!--    <select id="selectMessage" resultType="com.miku.minadevelop.modules.response.MessageEntityResp">-->
+<!--        SELECT cc_message.*, sender.nickname as sendNickname, receiver.nickname as receiverNickname-->
+<!--        FROM (-->
+<!--                 SELECT * FROM cc_message-->
+<!--                 WHERE send_id = 1-->
+<!--                   AND status = 2-->
+<!--                 UNION ALL-->
+<!--                 SELECT * FROM cc_message-->
+<!--                 WHERE receiver_id = 1-->
+<!--                   AND status = 2-->
+<!--             ) AS cc_message-->
+<!--                 LEFT JOIN cc_user AS sender ON cc_message.send_id = sender.user_id-->
+<!--                 LEFT JOIN cc_user AS receiver ON cc_message.receiver_id = receiver.user_id-->
+<!--        ORDER BY cc_message.create_time;-->
+<!--    </select>-->
+
+    <select id="selectMessage" resultType="com.miku.minadevelop.modules.response.MessageEntityResp">
+        SELECT chat.id,
+               msg.content,
+               receiver.nickname as receiverNickname,
+               send.nickname     as sendNickname,
+               msg.receiver_uid,
+               msg.send_uid,
+               msg.create_time,
+
+        from cc_chat chat
+                 LEFT JOIN cc_message msg on chat.id = msg.chat_id
+                 LEFT JOIN cc_user receiver on msg.receiver_uid = receiver.user_id
+                 left join cc_user send on msg.send_uid = send.user_id
+        where chat.id = ${chatId}
     </select>
 </mapper>
