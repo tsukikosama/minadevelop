@@ -8,17 +8,16 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.nio.file.Paths;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-
-public class CodeGenerator {
-    /**
-     * 数据源配置
-     */
+public class CodeGeneratorSingle {
     public static void main(String[] args) {
         String outputDir = Paths.get(System.getProperty("user.dir")) + "/src/main/java";
         String xmlDir = Paths.get(System.getProperty("user.dir")) + "/src/main/resources";
-
+        List<String> tables = new ArrayList<>();
+        tables.add("tb_filter_order");
         String url = "jdbc:mysql://127.0.0.1:3306/minadevelop2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&allowMultiQueries=true&rewriteBatchedStatements=true" ;
         // 使用 FastAutoGenerator 快速配置代码生成器
         FastAutoGenerator.create(url, "root", "2270398619")
@@ -47,18 +46,11 @@ public class CodeGenerator {
                             .pathInfo(Collections.singletonMap(OutputFile.xml,xmlDir+"/mapper"));
                 })
                 .strategyConfig(builder -> {
-                    builder.addTablePrefix("cc_") // 设置需要生成的表名
-                            .entityBuilder()
-                            .enableLombok()
-                            .idType(IdType.AUTO) // 启用 Lombok
-                            .enableTableFieldAnnotation() // 启用字段注解
-                            .controllerBuilder()
-                            .enableRestStyle(); // 启用 REST 风格
+                    builder.addInclude(tables) // 设置需要生成的表名
+                            .addTablePrefix("cc_").entityBuilder().formatFileName("%sEntity").enableLombok().idType(IdType.AUTO); // 设置过滤表前缀
                 })
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用 Freemarker 模板引擎
                 .execute(); // 执行生成
     }
-
-
 
 }

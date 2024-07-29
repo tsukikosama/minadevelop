@@ -5,7 +5,7 @@ public enum MessageEnum {
 
     PERSON_MESSAGE(1, "个人消息"),
     GROUP_MESSAGE(2, "群消息"),
-    HEART_MESSAGE(-99, "系统消息"),
+    HEART_MESSAGE(-99, "心跳检测"),
 
     UNDEFINED_MESSAGE(500, "未定义");
     private int value;
