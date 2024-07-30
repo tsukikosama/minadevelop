@@ -2,20 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miku.minadevelop.modules.mapper.FansMapper">
     <select id="selectCustomPage" resultType="com.miku.minadevelop.modules.response.FansResp">
-        SELECT
-            fans.*,
-            users.user_id AS user_id,
-            follow.user_id AS followId,
-            users.nickname AS nickname,
-            follow.nickname AS followNickname,
-            users.avatar AS avatar,
-            follow.avatar AS followAvatar
-        FROM
-            cc_fans fans
-                LEFT JOIN
-            cc_user users ON fans.user_id = users.user_id
-            LEFT JOIN
-            cc_user follow ON fans.follow_user_id = follow.user_id
+        SELECT users.user_id      AS user_id,
+               follow.user_id     AS followId,
+               users.nickname     AS nickname,
+               follow.nickname    AS followNickname,
+               users.avatar       AS avatar,
+               follow.avatar      AS followAvatar,
+               fans.is_follow,
+               backFans.is_follow as bakcFollow
+        FROM cc_fans fans
+                 LEFT JOIN
+             cc_user users ON fans.user_id = users.user_id
+                 LEFT JOIN
+             cc_user follow ON fans.follow_user_id = follow.user_id
+                 LEFT JOIN cc_fans backFans
+                           ON backFans.user_id = fans.follow_user_id and backFans.follow_user_id = fans.user_id
             ${ew.customSqlSegment}
     </select>
 </mapper>

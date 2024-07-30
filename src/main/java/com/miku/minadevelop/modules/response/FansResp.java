@@ -9,4 +9,5 @@ public class FansResp extends Fans {
     private String avatar;
     private String followNickname;
     private String followAvatar;
+    private Integer isBackFollow;
 }
