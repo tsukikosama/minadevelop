@@ -21,7 +21,7 @@ public class ChatTask {
     private final IChatService chatService;
 
     private final IMessageService messageService;
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void updateLastMessageId() {
         log.info("【定时任务】更新用户的最后一条消息");
         List<Chat> list = chatService.list();

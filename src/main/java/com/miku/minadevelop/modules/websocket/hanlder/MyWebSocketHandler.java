@@ -39,11 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import static com.miku.minadevelop.modules.websocket.enmus.MessageEnum.*;
-
-
-//@Component
 
 @Slf4j
 public class MyWebSocketHandler extends TextWebSocketHandler {
@@ -59,7 +55,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     /**
      * 在线用户的集合
      */
-    public static final Map<String, WebSocketSession> userList = new HashMap<>();
+    public static final Map<Long, WebSocketSession> userList = new HashMap<>();
     /**
      * 群集合
      */
@@ -71,7 +67,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
      * 消息推送可以采用发布订阅设计模式实现
      * 会占用比较大的内存空间   可以采用数据库持久化的方式  避免占用过多的空间
      */
-    public static final Map<Long,List<Long>> followList = new HashMap<>();
+    public static final Map<Long, List<Long>> followList = new HashMap<>();
+
     /**
      * 开始连接调用的方法
      *
@@ -83,64 +80,59 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         String query = session.getUri().getQuery();
         Map<String, String> parameters = parseQueryParameters(query);
 
-        String userId = parameters.get("userId");
+        String id = parameters.get("userId");
+        System.out.println(Long.parseLong(id));
+        long userId = Long.parseLong(id);
         session.getId();
         //判断用户是否连接过了 如果连接过了就把旧的连接替换掉
         if (userList.containsKey(userId)) {
             userList.remove(userId);
-            userList.put(userId, session);
         }
-//        String id = session.getId();
-//        System.out.println(id);
-//        System.out.println("Connected: " + session.getId());
         userList.put(userId, session);
         log.info("当前连接用户数量为{}", userList.size());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println(session.getUri());;
+        System.out.println(session.getUri());
+        ;
         String query = message.getPayload();
         JsonObject parameters = getMessage(query);
         //通过消息类型来进行不同的处理
         int msgType = parameters.get("msgType").getAsInt();
-        log.info("当前的message{},session:{},消息类型为:{}", message,session,sendMsgCommand(msgType));
-        String receiverId = parameters.get("msgReceiver").getAsString();
-        String sendId = parameters.get("msgSend").getAsString();
+        log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
+        Long receiverId = parameters.get("msgReceiver").getAsLong();
+        Long sendId = parameters.get("msgSend").getAsLong();
         switch (sendMsgCommand(msgType)) {
             case PERSON_MESSAGE:
                 sendPersonMsg(receiverId, parameters);
                 break;
             case GROUP_MESSAGE:
                 log.info("给群发送消息");
-                ;
                 break;
             case HEART_MESSAGE:
                 sendHeart(sendId);
                 break;
-//            case 4:
-//                sendSystemMsg(new TextMessage());
+            case PUBLISH_MESSAGE:
+                sendPublishMessage(sendId, parameters);
             default:
                 log.info("未知类型的消息");
                 throw new CustomException("消息类型异常");
         }
-
-
     }
 
-
-    public MessageEnum sendMsgCommand(int value){
-        for (MessageEnum item : MessageEnum.values()){
-            if (item.getValue() == value){
+    public MessageEnum sendMsgCommand(int value) {
+        for (MessageEnum item : MessageEnum.values()) {
+            if (item.getValue() == value) {
                 return item;
             }
         }
         return UNDEFINED_MESSAGE;
     }
 
-
     /**
      * 连接断开触发的方法
+     *
      * @param session
      * @param status
      * @throws Exception
@@ -175,24 +167,53 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     }
 
-    public void sendHeart(String id)  {
-        log.info("当前用户的id为{}",id);
+    public void sendHeart(Long id) {
+        log.info("当前用户的id为{}", id);
         WebSocketSession webSocketSession = userList.get(id);
-        if (webSocketSession == null){
+        if (webSocketSession == null) {
             log.info("用户已经断开连接");
         }
         try {
-            webSocketSession.sendMessage(new TextMessage(("pong".getBytes(StandardCharsets.UTF_8))));
-        }catch (IOException e){
-            log.info("异常{}",e);
+            MessageDetail detail = BaseMessageDetail();
+
+            webSocketSession.sendMessage(new TextMessage(new Gson().toJson(detail)));
+        } catch (IOException e) {
+            log.info("异常{}", e);
         }
 
     }
 
     /**
-     *
+     * 发布动态消息
      */
-    public void sendPersonMsg(String id, JsonObject obj) {
+    public void sendPublishMessage(Long sendId, JsonObject obj) {
+
+    }
+
+    /**
+     *返回一个基本的messagedetail
+     * 默认是用来发送心跳消息的 其他的消息 选哟设置其他的属性
+     * @return
+     */
+    public MessageDetail BaseMessageDetail(){
+        MessageDetail detail = new MessageDetail();
+        detail.setReceiverUid(-1l);
+        detail.setSendUid(-1l);
+        detail.setMessageId("-1");
+        detail.setChatId("-1");
+        detail.setSendNickname("系统");
+//        detail.setReceiverNickname();
+        detail.setStatus("2");
+        detail.setCreateTime(DateUtil.now());
+        detail.setContent("pong");
+
+        return detail;
+    }
+
+    /**
+     * 点对点消息
+     */
+    public void sendPersonMsg(Long id, JsonObject obj) {
         System.out.println(obj.toString());
         Long receiverUid = obj.get("msgReceiver").getAsLong();
         Long msgSend = obj.get("msgSend").getAsLong();
@@ -200,7 +221,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         String content = obj.get("msgContent").getAsString();
         JsonElement chatId1 = obj.get("chatId");
         Long chatId = null;
-        if (chatId1 != null){
+        if (chatId1 != null) {
             chatId = chatId1.getAsLong();
         }
         Long messageId = WeilaiUtils.generateId();
@@ -216,7 +237,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             req.setReceiverId(receiverUid);
             chatId = chatService.createRelation(req);
         }
-        if (one != null){
+        if (one != null) {
             chatId = one.getId();
         }
         //获取到当前用户的通道
@@ -238,8 +259,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             String sendNickname = obj.get("sendNickname").getAsString();
             String receiverNickname = obj.get("receiverNickname").getAsString();
             //通过chatid去查询出用户的昵称
-            MessageDetail messageDetail = getMessageDetail(messageId.toString(),msgSend
-                    ,receiverUid,content,sendNickname,receiverNickname,chatId.toString());
+            MessageDetail messageDetail = getMessageDetail(messageId.toString(), msgSend
+                    , receiverUid, content, sendNickname, receiverNickname, chatId.toString());
 
             webSocketSession.sendMessage(new TextMessage(new Gson().toJson(messageDetail)));
         } catch (IOException e) {
@@ -261,8 +282,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         return parameters;
     }
 
-    public MessageDetail getMessageDetail(  String messageId, Long sendUid, Long receiverUid,
-                                          String content,  String sendNickname, String receiverNickname, String chatId){
+    public MessageDetail getMessageDetail(String messageId, Long sendUid, Long receiverUid,
+                                          String content, String sendNickname, String receiverNickname, String chatId) {
         MessageDetail detail = new MessageDetail();
 
         detail.setMessageId(messageId);

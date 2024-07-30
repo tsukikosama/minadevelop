@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-07-19
  */
 @RestController
-@RequestMapping("/types")
+@RequestMapping("/type")
 @RequiredArgsConstructor
 @Slf4j
 @Api("帖子分类接口")
