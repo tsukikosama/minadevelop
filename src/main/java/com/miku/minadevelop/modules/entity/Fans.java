@@ -42,4 +42,14 @@ public class Fans implements Serializable {
     @ApiModelProperty("是否关注")
     private Integer isFollow;
 
+    @Override
+    public String toString() {
+        return "Fans{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", followUserId=" + followUserId +
+                ", createTime=" + createTime +
+                ", isFollow=" + isFollow +
+                '}';
+    }
 }

@@ -42,6 +42,11 @@ public class FansController {
         return Result.ok();
     }
 
+    @PostMapping("/notFollow")
+    public Result notFollow(@RequestBody @Validated FollowReq req){
+        fansService.notFollow(req);
+        return Result.ok();
+    }
     @GetMapping("/test")
     public String test(){
         fansService.executeAddFans();

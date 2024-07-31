@@ -9,6 +9,8 @@ import com.miku.minadevelop.modules.response.FansResp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -21,4 +23,7 @@ import org.apache.ibatis.annotations.Param;
 public interface FansMapper extends BaseMapper<Fans> {
 
     IPage<FansResp> selectCustomPage(IPage<Object> page, @Param(Constants.WRAPPER)QueryWrapper<Fans> userId);
+
+
+    FansResp selectFansByUserId(@Param("uid")Long userId,@Param("followUid")String followUid);
 }

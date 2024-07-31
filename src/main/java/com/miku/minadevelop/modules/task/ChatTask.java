@@ -25,7 +25,6 @@ public class ChatTask {
     public void updateLastMessageId() {
         log.info("【定时任务】更新用户的最后一条消息");
         List<Chat> list = chatService.list();
-//        boolean stop = true;
         for(Chat item : list){
             //通过chatid 去查询最后一条消息的时间
             chatService.updateLastMessageId(item.getId());

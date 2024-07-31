@@ -19,7 +19,8 @@ public class NotFollowListener {
     @EventListener(NotFollowEvent.class)
     public void notFollowEvent(NotFollowEvent event) {
         FollowReq source = (FollowReq) event.getSource();
-        log.info("用户{}取消关注{}开始咯",source.getUserId(),source.getFollowUid());
-        fansService.follow(source);
+        log.info("用户{}取消关注{}开始咯",source.getUserId(),source.getFollowUserId());
+        fansService.notFollow(source);
+        log.info("移除完成啦");
     }
 }

@@ -22,7 +22,7 @@
              cc_user send ON chat.send_uid = send.user_id
                  LEFT JOIN
              cc_user receiver ON chat.receiver_uid = receiver.user_id
-        WHERE u.user_id = ${uid} and msg.id > chat.last_message_id;
+        WHERE u.user_id = ${uid} and msg.id > chat.last_message_id ;
     </select>
 
     <update id="updetaLastMessageId">

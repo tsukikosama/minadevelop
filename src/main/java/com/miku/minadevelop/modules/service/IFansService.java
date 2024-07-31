@@ -20,4 +20,6 @@ public interface IFansService extends IService<Fans> {
 
     void follow(FollowReq req);
     public void executeAddFans();
+
+    void notFollow(FollowReq req);
 }

@@ -1,23 +1,41 @@
 package com.miku.minadevelop.common.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executor;
+import cn.hutool.core.thread.ThreadFactoryBuilder;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+import java.util.concurrent.*;
+
+
+@Getter
+@Slf4j
 public class TaskExecutorConfig {
 
-    @Bean(name = "taskExecutor")
-    public Executor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        //设置线程前缀
-        executor.setThreadNamePrefix("task-");
-        executor.initialize();
-        return executor;
+    private static final TaskExecutorConfig INSTANCE = new TaskExecutorConfig();
+
+    public static TaskExecutorConfig getInstance() {
+        return INSTANCE;
+    }
+
+    private final ThreadPoolExecutor fanExecutor;
+
+
+//    private final ThreadPoolExecutor fakerOrderExecutor;
+
+
+    private TaskExecutorConfig() {
+        log.info("初始化线程池设置。。。。");
+        long keepAliveTime = 1;
+        TimeUnit unit = TimeUnit.MINUTES;
+        fanExecutor = new ThreadPoolExecutor(
+                1500,
+                1500,
+                keepAliveTime,
+                unit,
+                new LinkedBlockingQueue<>(),
+                new ThreadFactoryBuilder().setNamePrefix("fans").build(),
+                new ThreadPoolExecutor.AbortPolicy()
+        );
     }
 }

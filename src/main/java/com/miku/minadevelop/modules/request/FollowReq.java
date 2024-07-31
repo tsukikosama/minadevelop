@@ -7,7 +7,8 @@ public class FollowReq {
     //用户
     private Long userId;
     //关注的用户id
-    private Long followUid;
+    private Long followUserId;
     //是否关注 0未关注 1关注
     private Integer isFollow;
+
 }
