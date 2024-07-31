@@ -34,6 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static com.miku.minadevelop.modules.utils.RedisKey.FOLLOW_KEY;
+import static com.miku.minadevelop.modules.utils.RedisKey.USER_KEY;
 
 /**
  * <p>
@@ -57,15 +58,19 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
     public IPage<FansResp> selectPage(IPage<Object> page, Long uid) {
         IPage<FansResp> result = baseMapper.selectCustomPage(page, new QueryWrapper<Fans>().eq("fans.user_id", uid));
         //从redis中查看是否有关注的用户 如果有就把数据添加入结果中
-        String redisKey = FOLLOW_KEY + uid;
+        String redisKey = USER_KEY + uid;
+
+        //@todo 需要从redis中查询到 我关注的用户
         Set<String> membersFans = stringRedisTemplate.opsForSet().members(redisKey);
-        List<FansResp> collect = membersFans.stream().map(item -> {
-            FansResp fansResps = baseMapper.selectFansByUserId(uid, item);
-            return fansResps;
-        }).collect(Collectors.toList());
-        System.out.println(collect);
+        log.info("关注的用户数量为：{}",membersFans);
         List<FansResp> records = result.getRecords();
-        records.addAll(collect);
+        records.forEach(item -> {
+            Integer userId = item.getFollowUserId();
+            if(membersFans.contains(userId.toString())){
+                log.info("寻找到了相互关注的{}",item);
+                item.setIsBackFollow(1);
+            }
+        });
         result.setRecords(records);
         return result;
     }
@@ -82,6 +87,14 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
         this.update(Wrappers.<Fans>lambdaUpdate().eq(Fans::getUserId,req.getUserId()).
                 eq(Fans::getFollowUserId,req.getFollowUserId()).set(Fans::getIsFollow,0));
     }
+
+    @Override
+    public IPage<FansResp> selectFansListByUid(IPage<Object> page, Long uid) {
+        IPage<FansResp> result = baseMapper.selectFansListByUid(page,
+                Wrappers.<Fans>lambdaUpdate().eq(Fans::getFollowUserId,uid.toString()).eq(Fans::getIsFollow,1));
+        return result;
+    }
+
     /**
      * 先从redis中查询是否关注过 如果没有关注过就去查询数据库
      * 如果数据库中没有查询到
@@ -123,7 +136,6 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
             }else{
                 //表明不是第一次关注 查看是直接对one进行已获操作
                 one.setIsFollow(one.getIsFollow()^1);
-
             }
             //然后将当前的结果存入数据库 和存入redis中
 //            save(one);
@@ -136,10 +148,57 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
         }
     }
 
+    /**
+     *  集合为我关注的人
+     * @param req
+     */
+
+    public void followtest(FollowReq req) {
+        //获取用户的id 拼接rediskey
+        String followKey = USER_KEY + req.getUserId();
+        //获取全部的粉丝
+        Set<String> fansMembers = stringRedisTemplate.opsForSet().members(followKey);
+        //判断是否存在当前的用户id
+        if (fansMembers.contains(req.getFollowUserId().toString())){
+            //存在 当前用户 把当前用户的从redis中移除
+            Long remove = stringRedisTemplate.opsForSet().remove(followKey, req.getFollowUserId().toString());
+            log.info("移除的用户个数{}",remove);
+            log.info("{}解除对{}的关注",req.getFollowUserId(),req.getUserId());
+            //TODO 移除了之后怎么同步到数据库
+            // 方法一:开一个线程去通知数据库把该数据同步
+            // 方法二:这里采用Spring的发布于订阅来实现(采用)
+            // 方法三:redis的发布订阅
+            NotFollowEvent notFollowEvent = new NotFollowEvent(req);
+            //发布事件
+            SpringUtil.publishEvent(notFollowEvent);
+        }else{
+            //不存在 去数据库中查询当前用户是否关注过
+            LambdaQueryWrapper<Fans> fansLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            fansLambdaQueryWrapper.eq(Fans::getUserId,req.getUserId()).eq(Fans::getFollowUserId,req.getFollowUserId());
+            Fans one = getOne(fansLambdaQueryWrapper);
+            log.info("数据库中的数据{}",one);
+            if (one == null){
+                //没查到表明 用户是第一次关注
+                one = BeanUtil.copyProperties(req, Fans.class);
+                one.setIsFollow(1);
+            }else{
+                //表明不是第一次关注 查看是直接对one进行已获操作
+                one.setIsFollow(one.getIsFollow()^1);
+            }
+            //然后将当前的结果存入数据库或存入redis中
+            //如果值为1就代表用户之前没有关注过 现在关注了就将用户存入redis后面回自动存入数据库中这里不需要管
+            //如果值为0就代表之前关注了 要取消关注 直接去更新数据库即可
+            if(one.getIsFollow() == 1){
+                stringRedisTemplate.opsForSet().add(followKey,one.getFollowUserId().toString());
+            }else{
+                saveOrUpdate(one);
+            }
+        }
+    }
 
     @Override
     public void executeAddFans(){
-        ScanOptions scanOptions = ScanOptions.scanOptions().match("follow:*").count(100).build();
+        ScanOptions scanOptions = ScanOptions.scanOptions().match("user:*").count(100).build();
         Cursor<String> cursor = stringRedisTemplate.scan(scanOptions);
         ThreadPoolExecutor executor = TaskExecutorConfig.getInstance().getFanExecutor();
         while (cursor.hasNext()) {
@@ -154,20 +213,18 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
      * @param key
      */
     public void addFansByUid(String key){
-//        log.info("test");
-        //获取关注用户的id 拼接rediskey
-//        String followKey = FOLLOW_KEY + key;
-//        log.info("当前的key为:{}",followKey);
         Set<String> members = stringRedisTemplate.opsForSet().members(key);
-//        log.info("当前关注用户的数量{}",members.size());
-//        log.info("当前的用户为:{}",key.substring(7));
         members.stream().forEach(item -> {
-            Fans fans = new Fans();
-            fans.setUserId(Integer.parseInt(key.substring(7)));
-            fans.setFollowUserId(Integer.parseInt(item));
+            //先从数据库中查询一下是否有值
+            Fans fans = this.getOne(Wrappers.<Fans>lambdaQuery().eq(Fans::getUserId, key.substring(5)).eq(Fans::getFollowUserId, Integer.parseInt(item)));
+            if (fans == null){
+                 fans = new Fans();
+                fans.setUserId(Integer.parseInt(key.substring(5)));
+                fans.setFollowUserId(Integer.parseInt(item));
+            }
             fans.setIsFollow(1);
             log.info("当前保存的信息为:{}",fans);
-            boolean save = this.save(fans);
+            boolean save = this.saveOrUpdate(fans);
             log.info("粉丝{}关注{}成功",item,key);
         });
         stringRedisTemplate.delete(key);

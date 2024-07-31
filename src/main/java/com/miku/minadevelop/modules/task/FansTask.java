@@ -19,7 +19,7 @@ public class FansTask {
     /**
      * 每30分钟持久化一次粉丝
      */
-    @Scheduled(cron = "0 0/3 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void updateLastMessageId() {
         log.info("【定时任务】开始存储redis中的粉丝");
         fansService.executeAddFans();

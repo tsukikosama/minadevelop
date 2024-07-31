@@ -36,9 +36,15 @@ public class FansController {
         return Result.ok(page);
     }
 
+    @GetMapping("/followList/{uid}")
+    public Result followList(CommonQuery query ,@PathVariable("uid") Long uid){
+        IPage<FansResp> page = fansService.selectFansListByUid(query.getPage(),uid);
+        return Result.ok(page);
+    }
+
     @PostMapping("/follow")
     public Result follow(@RequestBody @Validated FollowReq req){
-        fansService.follow(req);
+        fansService.followtest(req);
         return Result.ok();
     }
 

@@ -1,6 +1,7 @@
 package com.miku.minadevelop.modules.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.miku.minadevelop.modules.entity.Fans;
@@ -26,4 +27,6 @@ public interface FansMapper extends BaseMapper<Fans> {
 
 
     FansResp selectFansByUserId(@Param("uid")Long userId,@Param("followUid")String followUid);
+
+    IPage<FansResp> selectFansListByUid(IPage<Object> page, @Param(Constants.WRAPPER)LambdaUpdateWrapper<Fans> eq);
 }

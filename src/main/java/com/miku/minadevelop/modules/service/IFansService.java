@@ -19,7 +19,13 @@ public interface IFansService extends IService<Fans> {
     IPage<FansResp> selectPage(IPage<Object> page, Long uid);
 
     void follow(FollowReq req);
+
+    void followtest(FollowReq req);
+
     public void executeAddFans();
 
     void notFollow(FollowReq req);
+
+
+    IPage<FansResp> selectFansListByUid(IPage<Object> page, Long uid);
 }

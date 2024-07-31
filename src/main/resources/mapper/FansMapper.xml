@@ -3,7 +3,7 @@
 <mapper namespace="com.miku.minadevelop.modules.mapper.FansMapper">
     <select id="selectCustomPage" resultType="com.miku.minadevelop.modules.response.FansResp">
         SELECT
---             users.user_id      AS user_id,
+            users.user_id      AS user_id,
                follow.user_id     AS followUserId,
 --                users.nickname     AS nickname,
                follow.nickname    AS followNickname,
@@ -25,5 +25,11 @@
         from cc_user user left join cc_fans fans
         on  fans.user_id = ${followUid}
         where user.user_id = ${uid}
+    </select>
+    <select id="selectFansListByUid" resultType="com.miku.minadevelop.modules.response.FansResp">
+        SELECT fans.*, user.nickname AS followNickname
+        FROM cc_fans fans LEFT JOIN cc_user user
+        ON fans.user_id = user.user_id
+            ${ew.customSqlSegment}
     </select>
 </mapper>

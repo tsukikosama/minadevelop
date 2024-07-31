@@ -46,7 +46,7 @@ public class ChatController {
     @PostMapping("/relation")
     public Result createRelation(@RequestBody @Validated ChatRelationReq req){
         Long relation = chatService.createRelation(req);
-        return Result.ok();
+        return Result.ok(relation);
     }
 
 
