@@ -39,4 +39,19 @@
             WHERE cc_chat.id = subquery.id
         ) where cc_chat.id = ${chatId};
     </update>
+
+    <select id="getChatId" resultType="String">
+        select chat.id
+        from cc_chat chat
+        where (chat.send_uid = ${sendUid} and chat.receiver_uid = ${receiverUid})
+           or (chat.send_uid = ${receiverUid} and chat.receiver_uid = ${sendUid})
+    </select>
+
+    <select id="getRelationByChatId" resultType="com.miku.minadevelop.modules.response.ChatRelationResp">
+        select chat.*, user.nickname as nickname, user.user_id as uid, user.avatar as avatar
+        from cc_chat chat
+                 left join cc_user user
+        on chat.receiver_uid = user.user_id
+        where chat.id = ${chatId}
+    </select>
 </mapper>

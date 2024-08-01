@@ -3,14 +3,15 @@
 <mapper namespace="com.miku.minadevelop.modules.mapper.FansMapper">
     <select id="selectCustomPage" resultType="com.miku.minadevelop.modules.response.FansResp">
         SELECT
-            users.user_id      AS user_id,
-               follow.user_id     AS followUserId,
+--             users.user_id      AS userId,
+               follow.user_id     AS userId,
 --                users.nickname     AS nickname,
-               follow.nickname    AS followNickname,
+               follow.nickname    AS nickname,
 --                users.avatar       AS avatar,
-               follow.avatar      AS followAvatar,
+               follow.avatar      AS avatar,
                fans.is_follow,
-               backFans.is_follow as isBackFollow
+               backFans.is_follow as isBackFollow,
+               fans.create_time as createTime
         FROM cc_fans fans
                  LEFT JOIN
              cc_user users ON fans.user_id = users.user_id
@@ -27,7 +28,7 @@
         where user.user_id = ${uid}
     </select>
     <select id="selectFansListByUid" resultType="com.miku.minadevelop.modules.response.FansResp">
-        SELECT fans.*, user.nickname AS followNickname
+        SELECT fans.*, user.nickname AS nickname
         FROM cc_fans fans LEFT JOIN cc_user user
         ON fans.user_id = user.user_id
             ${ew.customSqlSegment}

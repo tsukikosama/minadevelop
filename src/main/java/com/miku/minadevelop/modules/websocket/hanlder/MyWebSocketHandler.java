@@ -12,6 +12,7 @@ import com.miku.minadevelop.common.exception.CustomException;
 import com.miku.minadevelop.modules.entity.Chat;
 import com.miku.minadevelop.modules.entity.Message;
 import com.miku.minadevelop.modules.request.ChatRelationReq;
+import com.miku.minadevelop.modules.request.RelationBody;
 import com.miku.minadevelop.modules.service.IChatService;
 import com.miku.minadevelop.modules.service.IMessageService;
 import com.miku.minadevelop.modules.utils.BeanUtils;
@@ -175,7 +176,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }
         try {
             MessageDetail detail = BaseMessageDetail();
-
             webSocketSession.sendMessage(new TextMessage(new Gson().toJson(detail)));
         } catch (IOException e) {
             log.info("异常{}", e);
@@ -220,11 +220,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         //获取消息内容
         String content = obj.get("msgContent").getAsString();
         JsonElement chatId1 = obj.get("chatId");
-        Long chatId = null;
+        String chatId = null;
         if (chatId1 != null) {
-            chatId = chatId1.getAsLong();
+            chatId = chatId1.getAsString();
         }
-        Long messageId = WeilaiUtils.generateId();
+        String messageId = WeilaiUtils.generateId();
         //先判断用户是否是第一次发送消息  把自己当作接收者去数据库中查询一次
         // 如果没有 并且 chati为null 那么两个用户之间就没有发送过消息
         Chat findchat = new Chat();
@@ -232,13 +232,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         Chat one = chatService.getOne(Wrappers.<Chat>lambdaQuery().eq(Chat::getSendUid, receiverUid).eq(Chat::getReceiverUid, msgSend));
         if (chatId == null && one == null) {
             //存入一个聊天关系集合 并且把用户聊天关系存入关系表中
-            ChatRelationReq req = new ChatRelationReq();
-            req.setSendId(msgSend);
-            req.setReceiverId(receiverUid);
-            chatId = chatService.createRelation(req);
+            RelationBody req = new RelationBody();
+            req.setSendUid(msgSend);
+            req.setReceiverUid(receiverUid);
+            chatId = chatService.getChatId(req);
         }
         if (one != null) {
-            chatId = one.getId();
+            chatId = one.getId().toString();
         }
         //获取到当前用户的通道
         WebSocketSession webSocketSession = userList.get(id);
@@ -249,8 +249,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             message.setReceiverUid(receiverUid);
             message.setContent(content);
             message.setStatus(2);
-            message.setMessageId(messageId);
-            message.setChatId(chatId);
+            message.setMessageId(Long.parseLong(messageId));
+            message.setChatId(Long.parseLong(chatId));
             System.out.println(message);
             messageService.save(message);
             return;

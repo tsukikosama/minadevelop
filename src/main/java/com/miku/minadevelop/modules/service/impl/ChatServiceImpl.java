@@ -5,11 +5,14 @@ import com.miku.minadevelop.modules.entity.Chat;
 import com.miku.minadevelop.modules.entity.Message;
 import com.miku.minadevelop.modules.mapper.ChatMapper;
 import com.miku.minadevelop.modules.request.ChatRelationReq;
+import com.miku.minadevelop.modules.request.RelationBody;
+import com.miku.minadevelop.modules.response.ChatRelationResp;
 import com.miku.minadevelop.modules.response.MessageEntityResp;
 import com.miku.minadevelop.modules.response.MessageResp;
 import com.miku.minadevelop.modules.service.IChatService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.miku.minadevelop.modules.utils.WeilaiUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  * @since 2024-07-19
  */
 @Service
+@Slf4j
 public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IChatService {
 
     /**
@@ -51,9 +55,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
         List<MessageEntityResp> list = this.baseMapper.findUserMessage(uid);
         System.out.println(list);
         Map<Long, List<MessageEntityResp>> collect = list.stream().collect(Collectors.groupingBy(MessageEntityResp::getChatId));
-
         List<MessageResp> messageList = new ArrayList<>();
-
         for(Map.Entry<Long,List<MessageEntityResp>> item : collect.entrySet()){
             MessageResp msg = new MessageResp();
             msg.setChatId(item.getKey().toString());
@@ -73,21 +75,38 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
         }
         return messageList;
     }
+
+    /**
+     *查询两个用户的chatId
+     * @param req
+     * @return
+     */
     @Override
-    public Long createRelation(ChatRelationReq req){
-//        BeanUtil.copyProperties(r)
-        Chat chat = new Chat();
-        chat.setReceiverUid(req.getReceiverId());
-        chat.setSendUid(req.getSendId());
-        Long chatId = WeilaiUtils.generateId();
-        chat.setId(chatId);
-        this.save(chat);
-//        chat.setLastMessageId();
+    public String getChatId(RelationBody req){
+        //先从数据库中查找是否有用户的聊天关系
+        String chatId = baseMapper.getChatId(req.getSendUid(),req.getReceiverUid());
+        log.info("chatId{}",chatId);
+
+        if (chatId == null){
+            Chat chat = new Chat();
+            chat.setReceiverUid(req.getReceiverUid());
+            chat.setSendUid(req.getSendUid());
+            chatId = WeilaiUtils.generateId();
+            chat.setId(Long.parseLong(chatId));
+            this.save(chat);
+        }
+        log.info("chatId{}",chatId);
         return chatId;
     }
 
     @Override
     public void updateLastMessageId(Long chatId) {
         this.baseMapper.updetaLastMessageId(chatId);
+    }
+
+    @Override
+    public ChatRelationResp getRelationByChatId(Long chatId) {
+
+        return baseMapper.getRelationByChatId(chatId);
     }
 }

@@ -14,7 +14,7 @@ public class WeilaiUtils {
     }
 
 
-    public static Long generateId(){
-        return IdUtil.getSnowflakeNextId();
+    public static String generateId(){
+        return String.valueOf(IdUtil.getSnowflakeNextId());
     }
 }

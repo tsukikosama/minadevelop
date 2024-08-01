@@ -65,7 +65,7 @@ public class FansServiceImpl extends ServiceImpl<FansMapper, Fans> implements IF
         log.info("关注的用户数量为：{}",membersFans);
         List<FansResp> records = result.getRecords();
         records.forEach(item -> {
-            Integer userId = item.getFollowUserId();
+            Integer userId = Integer.parseInt(item.getUserId());
             if(membersFans.contains(userId.toString())){
                 log.info("寻找到了相互关注的{}",item);
                 item.setIsBackFollow(1);
