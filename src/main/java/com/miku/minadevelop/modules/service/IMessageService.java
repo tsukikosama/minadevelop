@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public interface IMessageService extends IService<Message> {
 
-    Map<Long,List<MessageEntityResp>> listUnreadMsg(Integer uid);
+    Map<String,List<MessageEntityResp>> listUnreadMsg(Integer uid);
 
     List<MessageEntityResp> listDetail(Integer chatId);
 }

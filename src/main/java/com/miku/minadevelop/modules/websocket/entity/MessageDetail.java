@@ -6,8 +6,8 @@ import lombok.Data;
 public class MessageDetail {
     private String id;
     private String messageId;
-    private Long sendUid;
-    private Long receiverUid;
+    private String sendUid;
+    private String receiverUid;
     private String content;
     private String createTime;
     private String status;

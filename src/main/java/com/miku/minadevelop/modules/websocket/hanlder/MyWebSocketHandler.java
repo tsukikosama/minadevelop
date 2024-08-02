@@ -197,8 +197,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
      */
     public MessageDetail BaseMessageDetail(){
         MessageDetail detail = new MessageDetail();
-        detail.setReceiverUid(-1l);
-        detail.setSendUid(-1l);
+        detail.setReceiverUid("");
+        detail.setSendUid("");
         detail.setMessageId("-1");
         detail.setChatId("-1");
         detail.setSendNickname("系统");
@@ -215,10 +215,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
      */
     public void sendPersonMsg(Long id, JsonObject obj) {
         System.out.println(obj.toString());
-        Long receiverUid = obj.get("msgReceiver").getAsLong();
-        Long msgSend = obj.get("msgSend").getAsLong();
+        String receiverUid = obj.get("msgReceiver").getAsString();
+        String msgSend = obj.get("msgSend").getAsString();
         //获取消息内容
-        String content = obj.get("msgContent").getAsString();
+        String content = obj.get("content").getAsString();
         JsonElement chatId1 = obj.get("chatId");
         String chatId = null;
         if (chatId1 != null) {
@@ -249,8 +249,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             message.setReceiverUid(receiverUid);
             message.setContent(content);
             message.setStatus(2);
-            message.setMessageId(Long.parseLong(messageId));
-            message.setChatId(Long.parseLong(chatId));
+            message.setMessageId(messageId);
+            message.setChatId(chatId);
             System.out.println(message);
             messageService.save(message);
             return;
@@ -282,7 +282,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         return parameters;
     }
 
-    public MessageDetail getMessageDetail(String messageId, Long sendUid, Long receiverUid,
+    public MessageDetail getMessageDetail(String messageId, String sendUid, String receiverUid,
                                           String content, String sendNickname, String receiverNickname, String chatId) {
         MessageDetail detail = new MessageDetail();
 

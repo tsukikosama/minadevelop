@@ -27,15 +27,15 @@ public class Chat implements Serializable {
 
     @ApiModelProperty("id")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     @ApiModelProperty("发送用户的id")
     @TableField("send_uid")
-    private Long sendUid;
+    private String sendUid;
 
     @ApiModelProperty("接收用户的id")
     @TableField("receiver_uid")
-    private Long receiverUid;
+    private String receiverUid;
 
     @ApiModelProperty("发送时间")
     @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
@@ -43,5 +43,5 @@ public class Chat implements Serializable {
 
     @ApiModelProperty("最后一条消息的id")
     @TableField("last_message_id")
-    private Long lastMessageId;
+    private String lastMessageId;
 }

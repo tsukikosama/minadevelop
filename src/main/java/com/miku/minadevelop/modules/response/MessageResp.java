@@ -9,6 +9,6 @@ import java.util.List;
 public class MessageResp {
     private String chatId;
     private String ChatNickname;
-    private Long ChatUid;
+    private String ChatUid;
     private List<MessageEntityResp> list;
 }

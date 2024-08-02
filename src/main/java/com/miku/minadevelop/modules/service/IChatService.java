@@ -24,8 +24,8 @@ public interface IChatService extends IService<Chat> {
 
     String getChatId(RelationBody req);
 
-    void updateLastMessageId(Long chatId);
+    void updateLastMessageId(String chatId);
 
-    ChatRelationResp getRelationByChatId(Long chatId);
+    ChatRelationResp getRelationByChatId(String chatId);
 
 }

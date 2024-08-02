@@ -21,10 +21,10 @@ public interface ChatMapper extends BaseMapper<Chat> {
 
     List<MessageEntityResp> findUserMessage(String uid);
 
-    void updetaLastMessageId(Long chatId);
+    void updetaLastMessageId(String chatId);
 
-    String getChatId(@Param("sendUid") Long sendUid, @Param("receiverUid") Long receiverUid);
+    String getChatId(@Param("sendUid") String sendUid, @Param("receiverUid") String receiverUid);
 
-    ChatRelationResp getRelationByChatId(@Param("chatId") Long chatId);
+    ChatRelationResp getRelationByChatId(@Param("chatId") String chatId);
 
 }

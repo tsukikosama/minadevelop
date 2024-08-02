@@ -7,5 +7,5 @@ import lombok.Data;
 public class MessageEntityResp extends Message {
     private String sendNickname;
     private String receiverNickname;
-    private Long messageId;
+    private String messageId;
 }

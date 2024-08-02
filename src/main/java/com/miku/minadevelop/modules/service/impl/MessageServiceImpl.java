@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements IMessageService {
 
     @Override
-    public Map<Long,List<MessageEntityResp>> listUnreadMsg(Integer uid) {
+    public Map<String,List<MessageEntityResp>> listUnreadMsg(Integer uid) {
         List<MessageEntityResp> messages = this.baseMapper.selectMessage(uid);
         //分组全部的消息
-        Map<Long, List<MessageEntityResp>> collect = messages.stream().collect(Collectors.groupingBy(MessageEntityResp::getSendUid));
+        Map<String, List<MessageEntityResp>> collect = messages.stream().collect(Collectors.groupingBy(MessageEntityResp::getSendUid));
         return collect;
     }
 

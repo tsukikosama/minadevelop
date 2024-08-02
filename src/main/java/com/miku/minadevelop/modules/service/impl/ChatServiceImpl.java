@@ -39,7 +39,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
      */
     public void ChatRelationCreate(Message message){
         //先判断是否拥有该关系
-        Long chatId = message.getChatId();
+        String chatId = message.getChatId();
         Chat chatRelation = getById(chatId);
         if (!BeanUtil.isEmpty(chatRelation)){
             return;
@@ -54,9 +54,9 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
     public List<MessageResp> listUserChat(String uid) {
         List<MessageEntityResp> list = this.baseMapper.findUserMessage(uid);
         System.out.println(list);
-        Map<Long, List<MessageEntityResp>> collect = list.stream().collect(Collectors.groupingBy(MessageEntityResp::getChatId));
+        Map<String, List<MessageEntityResp>> collect = list.stream().collect(Collectors.groupingBy(MessageEntityResp::getChatId));
         List<MessageResp> messageList = new ArrayList<>();
-        for(Map.Entry<Long,List<MessageEntityResp>> item : collect.entrySet()){
+        for(Map.Entry<String,List<MessageEntityResp>> item : collect.entrySet()){
             MessageResp msg = new MessageResp();
             msg.setChatId(item.getKey().toString());
 //            msg.setChatNickname();
@@ -65,10 +65,10 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
             //这边使用用户的uid去匹配 如果相同就取发送者的 不相同就取接收者的
             if (messageEntityResp.getSendUid().toString().equals(uid)){
                 msg.setChatNickname(messageEntityResp.getReceiverNickname());
-                msg.setChatUid(messageEntityResp.getReceiverUid());
+                msg.setChatUid(String.valueOf(messageEntityResp.getReceiverUid()));
             }else{
                 msg.setChatNickname(messageEntityResp.getSendNickname());
-                msg.setChatUid(messageEntityResp.getSendUid());
+                msg.setChatUid(String.valueOf(messageEntityResp.getSendUid()));
             }
             msg.setList(item.getValue());
             messageList.add(msg);
@@ -89,10 +89,10 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
 
         if (chatId == null){
             Chat chat = new Chat();
-            chat.setReceiverUid(req.getReceiverUid());
-            chat.setSendUid(req.getSendUid());
+            chat.setReceiverUid(String.valueOf(req.getReceiverUid()));
+            chat.setSendUid(String.valueOf(req.getSendUid()));
             chatId = WeilaiUtils.generateId();
-            chat.setId(Long.parseLong(chatId));
+            chat.setId(chatId);
             this.save(chat);
         }
         log.info("chatId{}",chatId);
@@ -100,12 +100,12 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
     }
 
     @Override
-    public void updateLastMessageId(Long chatId) {
+    public void updateLastMessageId(String chatId) {
         this.baseMapper.updetaLastMessageId(chatId);
     }
 
     @Override
-    public ChatRelationResp getRelationByChatId(Long chatId) {
+    public ChatRelationResp getRelationByChatId(String chatId) {
 
         return baseMapper.getRelationByChatId(chatId);
     }
