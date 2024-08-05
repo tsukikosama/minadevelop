@@ -48,10 +48,17 @@
     </select>
 
     <select id="getRelationByChatId" resultType="com.miku.minadevelop.modules.response.ChatRelationResp">
-        select chat.*, user.nickname as nickname, user.user_id as uid, user.avatar as avatar
+        select chat.id as chatId, user.nickname as nickname, user.user_id as receiver, user.avatar as avatar
         from cc_chat chat
                  left join cc_user user
         on chat.receiver_uid = user.user_id
         where chat.id = ${chatId}
+    </select>
+
+    <select id="getChatRelationAll" resultType="String">
+        select *
+        from cc_chat chat
+        where chat.receiver_uid = ${uid}
+           or chat.send_uid = ${uid}
     </select>
 </mapper>

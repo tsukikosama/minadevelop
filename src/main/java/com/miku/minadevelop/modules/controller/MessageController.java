@@ -51,7 +51,7 @@ public class MessageController {
      *  查询未读的消息
      */
     @ApiOperation("查询未读的消息")
-    @GetMapping("/detail/{uid}}")
+    @GetMapping("/detail/{uid}")
     public Result getMessage(@PathVariable("uid")Integer uid){
         Map<String,List<MessageEntityResp>> list = messageService.listUnreadMsg(uid);
         return Result.ok(list);

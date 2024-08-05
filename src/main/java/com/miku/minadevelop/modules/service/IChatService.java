@@ -28,4 +28,6 @@ public interface IChatService extends IService<Chat> {
 
     ChatRelationResp getRelationByChatId(String chatId);
 
+    List<String> listChatRelationAll(String chatId);
+
 }

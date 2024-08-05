@@ -27,4 +27,6 @@ public interface ChatMapper extends BaseMapper<Chat> {
 
     ChatRelationResp getRelationByChatId(@Param("chatId") String chatId);
 
+    List<String> getChatRelationAll(String chatId);
+
 }

@@ -1,6 +1,7 @@
 package com.miku.minadevelop.modules.websocket.hanlder;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.generator.IFill;
@@ -94,11 +95,18 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println(session.getUri());
-        ;
+    protected void handleTextMessage(WebSocketSession session, TextMessage message)   {
+        log.info("当前的消息是{}",message);
         String query = message.getPayload();
-        JsonObject parameters = getMessage(query);
+        if (BeanUtil.isEmpty(message)){
+            throw new CustomException("数据异常 发送消息失败");
+        }
+        JsonObject parameters;
+        try {
+             parameters = getMessage(query);
+        }catch (IOException e){
+            throw new CustomException("数据为空 消息发送失败");
+        }
         //通过消息类型来进行不同的处理
         int msgType = parameters.get("msgType").getAsInt();
         log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));

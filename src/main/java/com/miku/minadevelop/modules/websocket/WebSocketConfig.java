@@ -21,7 +21,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(new MyWebSocketHandler(), "/websocket").setAllowedOrigins("*").addInterceptors(
                 /**
                  * 这里添加了一个拦截器 可以通过这个拦截器把用户属性之类的放入会话属性
-                 *
                  */
                 new HandshakeInterceptor() {
                     @Override

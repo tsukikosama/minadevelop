@@ -59,5 +59,10 @@ public class ChatController {
         return Result.ok(res);
     }
 
-
+    @ApiOperation("查询当前用户的全部聊天关系")
+    @GetMapping("/relationAll/{chatId}")
+    public Result getChatRelationAll(@PathVariable("chatId")String chatId){
+        List<String> list = chatService.listChatRelationAll(chatId);
+        return Result.ok(list);
+    }
 }

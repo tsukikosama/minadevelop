@@ -24,8 +24,7 @@
                send.nickname     as sendNickname,
                msg.receiver_uid,
                msg.send_uid,
-               msg.create_time,
-
+               msg.create_time
         from cc_chat chat
                  LEFT JOIN cc_message msg on chat.id = msg.chat_id
                  LEFT JOIN cc_user receiver on msg.receiver_uid = receiver.user_id
