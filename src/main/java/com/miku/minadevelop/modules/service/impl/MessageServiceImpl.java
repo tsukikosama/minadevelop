@@ -25,9 +25,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
     @Override
     public Map<String,List<MessageEntityResp>> listUnreadMsg(Integer uid) {
-        List<MessageEntityResp> messages = this.baseMapper.selectMessage(uid);
+        List<MessageEntityResp> messages = this.baseMapper.selectUnreadMessage(uid);
         //分组全部的消息
-        Map<String, List<MessageEntityResp>> collect = messages.stream().collect(Collectors.groupingBy(MessageEntityResp::getSendUid));
+        Map<String, List<MessageEntityResp>> collect = messages.stream().collect(Collectors.groupingBy(MessageEntityResp::getChatId));
         return collect;
     }
 

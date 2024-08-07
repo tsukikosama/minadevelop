@@ -112,14 +112,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
 //        Long receiverId = parameters.get("msgReceiver").getAsString();
 //        Long sendId = parameters.get("msgSend").getAsLong();
-        Long chatId = parameters.get("chatId").getAsLong();
         Long uid = parameters.get("uid").getAsLong();
+        String receiverId = "";
+        if (!parameters.get("chatId").isJsonNull()){
+            Long chatId = parameters.get("chatId").getAsLong();
+            Chat chat = chatService.getById(chatId);
+             receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+        }
+
+
         //通过chatId 获取chat对象
-        Chat chat = chatService.getById(chatId);
-        String receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+
         switch (sendMsgCommand(msgType)) {
             case PERSON_MESSAGE:
-                sendPersonMsg(receiverId, parameters);
+                sendPersonMsg(receiverId, parameters,uid.toString());
                 break;
             case GROUP_MESSAGE:
                 log.info("给群发送消息");
@@ -228,10 +234,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     /**
      * 点对点消息
      */
-    public void sendPersonMsg(String id, JsonObject obj) {
+    public void sendPersonMsg(String msgSend, JsonObject obj,String receiverUid) {
         System.out.println(obj.toString());
-        String receiverUid = obj.get("msgReceiver").getAsString();
-        String msgSend = obj.get("msgSend").getAsString();
+//        String receiverUid = obj.get("msgReceiver").getAsString();
+//        String msgSend = obj.get("msgSend").getAsString();
         //获取消息内容
         String content = obj.get("content").getAsString();
         JsonElement chatId1 = obj.get("chatId");
@@ -255,8 +261,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         if (one != null) {
             chatId = one.getId().toString();
         }
-        //获取到当前用户的通道
-        WebSocketSession webSocketSession = userList.get(id);
+        //获取需要接收信息的用户通道
+        WebSocketSession webSocketSession = userList.get(receiverUid);
         //如果用户不在线就把消息存入数据库中
         if (webSocketSession == null) {
             Message message = new Message();

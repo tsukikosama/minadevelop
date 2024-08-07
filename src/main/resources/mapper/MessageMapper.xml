@@ -31,4 +31,9 @@
                  left join cc_user send on msg.send_uid = send.user_id
         where chat.id = ${chatId}
     </select>
+
+    <select id="selectUnreadMessage" resultType="com.miku.minadevelop.modules.response.MessageEntityResp">
+        SELECT * FROM cc_message msg where msg.receiver_uid = ${uid} and msg.status = 1
+    </select>
+
 </mapper>

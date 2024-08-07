@@ -21,4 +21,6 @@ public interface MessageMapper extends BaseMapper<Message> {
     List<MessageEntityResp> selectMessage(Integer uid);
 
     List<MessageEntityResp> selectMessageList(Integer chatId);
+
+    List<MessageEntityResp> selectUnreadMessage(Integer uid);
 }
