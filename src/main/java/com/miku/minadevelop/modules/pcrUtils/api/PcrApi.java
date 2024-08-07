@@ -8,39 +8,45 @@ import com.miku.minadevelop.modules.pcrUtils.BaseResp;
 import com.miku.minadevelop.modules.pcrUtils.config.pcrConfig;
 import com.miku.minadevelop.modules.pcrUtils.entity.Rank;
 
+import com.miku.minadevelop.modules.utils.BeanUtils;
+import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.json.TypeToken;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
 @Configuration
+@RequiredArgsConstructor
 public class PcrApi {
 
-    private static final pcrConfig pcrConfig = new pcrConfig();
-
-    public static String getRank(Map<String, Object> map) {
-
+    private  pcrConfig pcrConfig ;
+    @Bean
+    public  void init(){
+        this.pcrConfig = BeanUtils.getBean(com.miku.minadevelop.modules.pcrUtils.config.pcrConfig.class);
+    }
+    public  String getRank(Map<String, Object> map) {
+        System.out.println("wcookie"+pcrConfig.getCookie());
         HttpResponse res = HttpRequest.get("https://api.game.bilibili.com/game/player/tools/pcr/search_clan")
                 .form(map)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0")
                 .header("Connection", "keep-alive")
-                .header("Cookie", "SESSDATA=319e5dce%2C1738400231%2C56351%2A81CjAnUuFMIECEgHodX-upHeHVz89LnN0pSNSrSwaKuFdqz72JazQXoSvZd9cMT4oZrw8SVlhwT0pwam9yUE8xd0FUOTllNC1BWVNUeUlEYVMzY3ExS1B2dHRTTEllUEcyUW5lQVllcndvWFJydDE2Z2h2aW00VEY5X09SZUhIN0wtaGd5bVhtODV3IIEC")
+                .header("Cookie", pcrConfig.getCookie().toString())
                 .header("Bili-Status-Code", "0")
                 .header("X-Bili-Trace-Id", "1b72650df6ab5d64211db1174066b185")
                 .header("X-Ticket-Status", "1")
                 .header("X-Cache-Webcdn", "BYPASS from blzone01")
                 .header("Content-Encoding", "br")
                 .execute();
-        System.out.println(res.body());
-
+//        System.out.println(res.body());
         BaseResp o = new Gson().fromJson(res.body(), BaseResp.class);
 //        String data = o.getData();.
-        System.out.println(o.getData());
+//        System.out.println(o.getData());
         if (o.getData() == null){
             return "查询对象为空,稍后再试";
         }
-        System.out.println(o.getData());
+//        System.out.println(o.getData());
         StringBuilder sb = new StringBuilder();
         if (o.getData().toString().split(",").length > 0){
             Type listType = new TypeToken<List<Rank>>(){}.getType();

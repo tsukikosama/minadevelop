@@ -110,8 +110,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         //通过消息类型来进行不同的处理
         int msgType = parameters.get("msgType").getAsInt();
         log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
-        Long receiverId = parameters.get("msgReceiver").getAsLong();
-        Long sendId = parameters.get("msgSend").getAsLong();
+//        Long receiverId = parameters.get("msgReceiver").getAsString();
+//        Long sendId = parameters.get("msgSend").getAsLong();
+        Long chatId = parameters.get("chatId").getAsLong();
+        Long uid = parameters.get("uid").getAsLong();
+        //通过chatId 获取chat对象
+        Chat chat = chatService.getById(chatId);
+        String receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
         switch (sendMsgCommand(msgType)) {
             case PERSON_MESSAGE:
                 sendPersonMsg(receiverId, parameters);
@@ -120,15 +125,17 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 log.info("给群发送消息");
                 break;
             case HEART_MESSAGE:
-                sendHeart(sendId);
+                sendHeart(uid);
                 break;
             case PUBLISH_MESSAGE:
-                sendPublishMessage(sendId, parameters);
+                sendPublishMessage(uid, parameters);
             default:
                 log.info("未知类型的消息");
                 throw new CustomException("消息类型异常");
         }
     }
+
+
 
     public MessageEnum sendMsgCommand(int value) {
         for (MessageEnum item : MessageEnum.values()) {
@@ -221,7 +228,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     /**
      * 点对点消息
      */
-    public void sendPersonMsg(Long id, JsonObject obj) {
+    public void sendPersonMsg(String id, JsonObject obj) {
         System.out.println(obj.toString());
         String receiverUid = obj.get("msgReceiver").getAsString();
         String msgSend = obj.get("msgSend").getAsString();
