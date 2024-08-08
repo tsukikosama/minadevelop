@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author miku
@@ -25,7 +25,7 @@ public interface ChatMapper extends BaseMapper<Chat> {
 
     String getChatId(@Param("sendUid") String sendUid, @Param("receiverUid") String receiverUid);
 
-    ChatRelationResp getRelationByChatId(@Param("chatId") String chatId);
+    ChatRelationResp getRelationByChatId(@Param("chatId") String chatId, @Param("uid") String uid);
 
     List<String> getChatRelationAll(String chatId);
 

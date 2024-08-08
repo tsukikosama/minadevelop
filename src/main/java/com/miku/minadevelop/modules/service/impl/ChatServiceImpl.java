@@ -105,9 +105,9 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements IC
     }
 
     @Override
-    public ChatRelationResp getRelationByChatId(String chatId) {
+    public ChatRelationResp getRelationByChatId(String chatId,String uid) {
 
-        return baseMapper.getRelationByChatId(chatId);
+        return baseMapper.getRelationByChatId(chatId,uid);
     }
 
     @Override

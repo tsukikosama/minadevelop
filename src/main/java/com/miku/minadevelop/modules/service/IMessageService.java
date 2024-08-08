@@ -2,6 +2,7 @@ package com.miku.minadevelop.modules.service;
 
 import com.miku.minadevelop.modules.entity.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.miku.minadevelop.modules.response.MessageDetail;
 import com.miku.minadevelop.modules.response.MessageEntityResp;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface IMessageService extends IService<Message> {
 
     Map<String,List<MessageEntityResp>> listUnreadMsg(Integer uid);
 
-    List<MessageEntityResp> listDetail(Integer chatId);
+    List<MessageEntityResp> listDetail(Long chatId);
+
+    List<MessageDetail> getDetailUnread(String chatId);
 }

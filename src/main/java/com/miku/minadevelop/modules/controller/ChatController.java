@@ -53,9 +53,9 @@ public class ChatController {
     }
 
     @ApiOperation("通过chatId获取聊天关系")
-    @GetMapping("/chatIdRelation/{chatId}")
-    public Result getChatRelationByChatId(@PathVariable("chatId")String chatId){
-        ChatRelationResp res = chatService.getRelationByChatId(chatId);
+    @GetMapping("/chatIdRelation/{chatId}/{uid}")
+    public Result getChatRelationByChatId(@PathVariable(value = "chatId")String chatId,@PathVariable(value = "uid") String uid){
+        ChatRelationResp res = chatService.getRelationByChatId(chatId,uid);
         return Result.ok(res);
     }
 
@@ -65,4 +65,6 @@ public class ChatController {
         List<String> list = chatService.listChatRelationAll(chatId);
         return Result.ok(list);
     }
+
+
 }

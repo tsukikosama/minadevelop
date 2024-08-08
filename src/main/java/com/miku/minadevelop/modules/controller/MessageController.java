@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.miku.minadevelop.common.Result;
 import com.miku.minadevelop.modules.entity.Message;
 import com.miku.minadevelop.modules.enums.MessageStatusEnum;
+import com.miku.minadevelop.modules.response.MessageDetail;
 import com.miku.minadevelop.modules.response.MessageEntityResp;
 import com.miku.minadevelop.modules.service.IMessageService;
 import io.swagger.annotations.Api;
@@ -50,7 +51,7 @@ public class MessageController {
     /**
      *  查询未读的消息
      */
-    @ApiOperation("查询未读的消息")
+    @ApiOperation("查询全部未读的消息")
     @GetMapping("/unread/{uid}")
     public Result getMessage(@PathVariable("uid")Integer uid){
         Map<String,List<MessageEntityResp>> list = messageService.listUnreadMsg(uid);
@@ -59,7 +60,7 @@ public class MessageController {
 
     @ApiOperation("查询两个用户的消息")
     @GetMapping("/details/{chatId}")
-    public Result getDetailListByChatId(@PathVariable("chatId")Integer uid){
+    public Result getDetailListByChatId(@PathVariable("chatId")Long uid){
         List<MessageEntityResp> list = messageService.listDetail(uid);
         return Result.ok(list);
     }
@@ -69,6 +70,13 @@ public class MessageController {
     public Result notifi(@PathVariable("chatId")Long chatId){
         messageService.update(Wrappers.<Message>lambdaUpdate().eq(Message::getChatId,chatId).set(Message::getStatus, MessageStatusEnum.READ.getValue()));
         return Result.ok();
+    }
+
+    @ApiOperation("通过chatId查询聊天内容")
+    @GetMapping("/unreadDetail/{chatId}")
+    public Result getDetailUnread(@PathVariable("chatId")String chatId){
+        List<MessageDetail> list = messageService.getDetailUnread(chatId);
+        return Result.ok(list);
     }
 
 }

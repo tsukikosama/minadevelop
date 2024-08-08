@@ -33,7 +33,21 @@
     </select>
 
     <select id="selectUnreadMessage" resultType="com.miku.minadevelop.modules.response.MessageEntityResp">
-        SELECT * FROM cc_message msg where msg.receiver_uid = ${uid} and msg.status = 1
+        SELECT *,user.user_id as receiverUid, user.nickname as receiverNickname, user.avatar as receiverAvatar,send.nickname as sendNickname,send.avatar as sendAvatar,send.user_id as sendUid
+        FROM cc_message msg
+                 left join cc_user user
+        on msg.receiver_uid = user.user_id
+                left join cc_user send
+        on msg.send_uid = send.user_id
+        where msg.receiver_uid = ${uid} and msg.status = 2
+    </select>
+
+    <select id="selectUnreadMessageDetail" resultType="com.miku.minadevelop.modules.response.MessageDetail">
+        SELECT user.user_id as uid ,msg.chat_id as chatId ,msg.content as content, user.nickname as nickname, user.avatar as avatar
+        FROM cc_message msg
+                 left join cc_user user
+        on msg.receiver_uid = user.user_id
+        where msg.chat_id = ${chatId} and msg.status = 2
     </select>
 
 </mapper>

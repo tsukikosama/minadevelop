@@ -12,10 +12,12 @@ import com.google.gson.JsonParser;
 import com.miku.minadevelop.common.exception.CustomException;
 import com.miku.minadevelop.modules.entity.Chat;
 import com.miku.minadevelop.modules.entity.Message;
+import com.miku.minadevelop.modules.entity.User;
 import com.miku.minadevelop.modules.request.ChatRelationReq;
 import com.miku.minadevelop.modules.request.RelationBody;
 import com.miku.minadevelop.modules.service.IChatService;
 import com.miku.minadevelop.modules.service.IMessageService;
+import com.miku.minadevelop.modules.service.IUserService;
 import com.miku.minadevelop.modules.utils.BeanUtils;
 import com.miku.minadevelop.modules.utils.WeilaiUtils;
 import com.miku.minadevelop.modules.websocket.enmus.MessageEnum;
@@ -48,16 +50,17 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private IChatService chatService;
     public IMessageService messageService;
 
-
+    private IUserService userService;
     public MyWebSocketHandler() {
         this.messageService = BeanUtils.getBean(IMessageService.class);
         this.chatService = BeanUtils.getBean(IChatService.class);
+        this.userService = BeanUtils.getBean(IUserService.class);
     }
 
     /**
      * 在线用户的集合
      */
-    public static final Map<Long, WebSocketSession> userList = new HashMap<>();
+    public static final Map<String, WebSocketSession> userList = new HashMap<>();
     /**
      * 群集合
      */
@@ -83,20 +86,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         Map<String, String> parameters = parseQueryParameters(query);
 
         String id = parameters.get("userId");
-        System.out.println(Long.parseLong(id));
-        long userId = Long.parseLong(id);
+//        System.out.println(Long.parseLong(id));
+
         session.getId();
         //判断用户是否连接过了 如果连接过了就把旧的连接替换掉
-        if (userList.containsKey(userId)) {
-            userList.remove(userId);
+        if (userList.containsKey(id)) {
+            userList.remove(id);
         }
-        userList.put(userId, session);
+        userList.put(id, session);
         log.info("当前连接用户数量为{}", userList.size());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message)   {
-        log.info("当前的消息是{}",message);
+//        log.info("当前的消息是{}",message);
         String query = message.getPayload();
         if (BeanUtil.isEmpty(message)){
             throw new CustomException("数据异常 发送消息失败");
@@ -114,15 +117,14 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 //        Long sendId = parameters.get("msgSend").getAsLong();
         Long uid = parameters.get("uid").getAsLong();
         String receiverId = "";
-        if (!parameters.get("chatId").isJsonNull()){
+        if (!parameters.get("chatId").isJsonNull() && !parameters.get("chatId").getAsString().isEmpty()){
             Long chatId = parameters.get("chatId").getAsLong();
             Chat chat = chatService.getById(chatId);
-             receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+            receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+
         }
 
-
         //通过chatId 获取chat对象
-
         switch (sendMsgCommand(msgType)) {
             case PERSON_MESSAGE:
                 sendPersonMsg(receiverId, parameters,uid.toString());
@@ -235,6 +237,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
      * 点对点消息
      */
     public void sendPersonMsg(String msgSend, JsonObject obj,String receiverUid) {
+        log.info("用户{}给用户{}发送{}类型的消息",msgSend,receiverUid,"个人消息");
         System.out.println(obj.toString());
 //        String receiverUid = obj.get("msgReceiver").getAsString();
 //        String msgSend = obj.get("msgSend").getAsString();
@@ -277,13 +280,18 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             return;
         }
         try {
-            String sendNickname = obj.get("sendNickname").getAsString();
-            String receiverNickname = obj.get("receiverNickname").getAsString();
-            //通过chatid去查询出用户的昵称
-            MessageDetail messageDetail = getMessageDetail(messageId.toString(), msgSend
-                    , receiverUid, content, sendNickname, receiverNickname, chatId.toString());
+//            String sendNickname = obj.get("sendNickname").getAsString();
+//            String receiverNickname = obj.get("receiverNickname").getAsString();
 
+            //通过chatid去查询出用户的昵称
+//            Chat chat = chatService.getById(chatId);
+            //通过uid 去查询用户的信息
+            User send = userService.getById(msgSend);
+            User receiver = userService.getById(receiverUid);
+            MessageDetail messageDetail = getMessageDetail(messageId, msgSend
+                    , receiverUid, content, send.getNickname(), receiver.getNickname(), chatId);
             webSocketSession.sendMessage(new TextMessage(new Gson().toJson(messageDetail)));
+            log.info("发送成功");
         } catch (IOException e) {
             log.info("io异常");
         }
