@@ -112,22 +112,23 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }
         //通过消息类型来进行不同的处理
         int msgType = parameters.get("msgType").getAsInt();
-        log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
+//        log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
 //        Long receiverId = parameters.get("msgReceiver").getAsString();
 //        Long sendId = parameters.get("msgSend").getAsLong();
-        Long uid = parameters.get("uid").getAsLong();
-        String receiverId = "";
+        //接收的人
+        String uid = parameters.get("uid").getAsString();
+        String send = "";
         if (!parameters.get("chatId").isJsonNull() && !parameters.get("chatId").getAsString().isEmpty()){
             Long chatId = parameters.get("chatId").getAsLong();
             Chat chat = chatService.getById(chatId);
-            receiverId = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+            send = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
 
         }
 
         //通过chatId 获取chat对象
         switch (sendMsgCommand(msgType)) {
             case PERSON_MESSAGE:
-                sendPersonMsg(receiverId, parameters,uid.toString());
+                sendPersonMsg(send, parameters,uid);
                 break;
             case GROUP_MESSAGE:
                 log.info("给群发送消息");
@@ -191,7 +192,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     }
 
-    public void sendHeart(Long id) {
+    public void sendHeart(String id) {
         log.info("当前用户的id为{}", id);
         WebSocketSession webSocketSession = userList.get(id);
         if (webSocketSession == null) {
@@ -209,7 +210,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     /**
      * 发布动态消息
      */
-    public void sendPublishMessage(Long sendId, JsonObject obj) {
+    public void sendPublishMessage(String sendId, JsonObject obj) {
 
     }
 
@@ -267,18 +268,18 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         //获取需要接收信息的用户通道
         WebSocketSession webSocketSession = userList.get(receiverUid);
         //如果用户不在线就把消息存入数据库中
-        if (webSocketSession == null) {
-            Message message = new Message();
-            message.setSendUid(msgSend);
-            message.setReceiverUid(receiverUid);
-            message.setContent(content);
-            message.setStatus(2);
-            message.setMessageId(messageId);
-            message.setChatId(chatId);
-            System.out.println(message);
-            messageService.save(message);
-            return;
-        }
+//        if (webSocketSession == null) {
+//            Message message = new Message();
+//            message.setSendUid(msgSend);
+//            message.setReceiverUid(receiverUid);
+//            message.setContent(content);
+//            message.setStatus(2);
+//            message.setMessageId(messageId);
+//            message.setChatId(chatId);
+////            System.out.println(message);
+//            messageService.save(message);
+////            return;
+//        }
         try {
 //            String sendNickname = obj.get("sendNickname").getAsString();
 //            String receiverNickname = obj.get("receiverNickname").getAsString();
@@ -291,11 +292,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             MessageDetail messageDetail = getMessageDetail(messageId, msgSend
                     , receiverUid, content, send.getNickname(), receiver.getNickname(), chatId);
             webSocketSession.sendMessage(new TextMessage(new Gson().toJson(messageDetail)));
-            log.info("发送成功");
+            log.info("发送成功{}",messageDetail);
         } catch (IOException e) {
             log.info("io异常");
         }
-
+        //将消息存入数据库中
+        Message message = new Message();
+        message.setSendUid(msgSend);
+        message.setReceiverUid(receiverUid);
+        message.setContent(content);
+        message.setStatus(2);
+        message.setMessageId(messageId);
+        message.setChatId(chatId);
+//            System.out.println(message);
+        messageService.save(message);
 
     }
 
