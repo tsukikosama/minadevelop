@@ -14,4 +14,6 @@ public class MessageDetail {
     private String sendNickname;
     private String receiverNickname;
     private String chatId;
+
+
 }

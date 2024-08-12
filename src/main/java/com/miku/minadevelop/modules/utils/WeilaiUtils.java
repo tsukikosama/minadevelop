@@ -4,9 +4,9 @@ import cn.hutool.Hutool;
 import cn.hutool.core.util.IdUtil;
 
 /**
+ *  weilai的个人工具类
  * 项目中需要使用的一些工具类
  */
-
 public class WeilaiUtils {
 
     public static String getMessageId(){
@@ -17,4 +17,7 @@ public class WeilaiUtils {
     public static String generateId(){
         return String.valueOf(IdUtil.getSnowflakeNextId());
     }
+
+
+
 }

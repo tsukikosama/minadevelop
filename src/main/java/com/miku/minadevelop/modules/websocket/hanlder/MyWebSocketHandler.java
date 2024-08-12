@@ -4,7 +4,6 @@ package com.miku.minadevelop.modules.websocket.hanlder;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.generator.IFill;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,22 +12,17 @@ import com.miku.minadevelop.common.exception.CustomException;
 import com.miku.minadevelop.modules.entity.Chat;
 import com.miku.minadevelop.modules.entity.Message;
 import com.miku.minadevelop.modules.entity.User;
-import com.miku.minadevelop.modules.request.ChatRelationReq;
 import com.miku.minadevelop.modules.request.RelationBody;
 import com.miku.minadevelop.modules.service.IChatService;
 import com.miku.minadevelop.modules.service.IMessageService;
 import com.miku.minadevelop.modules.service.IUserService;
 import com.miku.minadevelop.modules.utils.BeanUtils;
 import com.miku.minadevelop.modules.utils.WeilaiUtils;
+import com.miku.minadevelop.modules.websocket.Factory.MessageFactorty;
 import com.miku.minadevelop.modules.websocket.enmus.MessageEnum;
 import com.miku.minadevelop.modules.websocket.entity.MessageDetail;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jca.context.SpringContextResourceAdapter;
-import org.springframework.stereotype.Component;
+import org.openqa.selenium.json.Json;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -38,7 +32,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystemAlreadyExistsException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +80,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
         String id = parameters.get("userId");
 //        System.out.println(Long.parseLong(id));
-
         session.getId();
         //判断用户是否连接过了 如果连接过了就把旧的连接替换掉
         if (userList.containsKey(id)) {
@@ -100,51 +92,93 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message)   {
 //        log.info("当前的消息是{}",message);
+//        String query = message.getPayload();
+//        if (BeanUtil.isEmpty(message)){
+//            throw new CustomException("数据异常 发送消息失败");
+//        }
+//        JsonObject parameters;
+//        try {
+//             parameters = getMessage(query);
+//        }catch (IOException e){
+//            throw new CustomException("数据为空 消息发送失败");
+//        }
+//        //通过消息类型来进行不同的处理
+//        int msgType = parameters.get("msgType").getAsInt();
+////        log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
+////        Long receiverId = parameters.get("msgReceiver").getAsString();
+////        Long sendId = parameters.get("msgSend").getAsLong();
+//        //接收的人
+//        String uid = parameters.get("uid").getAsString();
+//        String send = "";
+//        if (!parameters.get("chatId").isJsonNull() && !parameters.get("chatId").getAsString().isEmpty()){
+//            Long chatId = parameters.get("chatId").getAsLong();
+//            Chat chat = chatService.getById(chatId);
+//            send = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
+//
+//        }
+        //获取消息对象
+        com.miku.minadevelop.modules.websocket.entity.Message msgVal = getMessage(message);
+        log.info("当前的消息对象为:{}",msgVal);
+        //使用工厂模式实现
+        MessageFactorty factorty = new MessageFactorty();
+        factorty.sendMsg(msgVal.getMsgType(),msgVal);
+        //通过chatId 获取chat对象
+        //普通的方法
+//        switch (sendMsgCommand(msgType)) {
+//            case PERSON_MESSAGE:
+//                sendPersonMsg(send, parameters,uid);
+//                break;
+//            case GROUP_MESSAGE:
+//                log.info("给群发送消息");
+//                break;
+//            case HEART_MESSAGE:
+//                sendHeart(uid);
+//                break;
+//            case PUBLISH_MESSAGE:
+//                sendPublishMessage(uid, parameters);
+//            default:
+//                log.info("未知类型的消息");
+//                throw new CustomException("消息类型异常");
+//        }
+    }
+
+    /**
+     * 解析消息的方法
+     * @param message
+     * @return
+     */
+    public com.miku.minadevelop.modules.websocket.entity.Message getMessage(TextMessage message){
+        com.miku.minadevelop.modules.websocket.entity.Message msgValue = new com.miku.minadevelop.modules.websocket.entity.Message();
         String query = message.getPayload();
         if (BeanUtil.isEmpty(message)){
             throw new CustomException("数据异常 发送消息失败");
         }
         JsonObject parameters;
         try {
-             parameters = getMessage(query);
+            parameters = getMessage(query);
         }catch (IOException e){
             throw new CustomException("数据为空 消息发送失败");
         }
         //通过消息类型来进行不同的处理
-        int msgType = parameters.get("msgType").getAsInt();
+        Integer msgType = parameters.get("msgType").getAsInt();
+        msgValue.setMsgType(msgType);
 //        log.info("当前的message{},session:{},消息类型为:{}", message, session, sendMsgCommand(msgType));
 //        Long receiverId = parameters.get("msgReceiver").getAsString();
 //        Long sendId = parameters.get("msgSend").getAsLong();
         //接收的人
         String uid = parameters.get("uid").getAsString();
+        msgValue.setReceiverUid(uid);
         String send = "";
         if (!parameters.get("chatId").isJsonNull() && !parameters.get("chatId").getAsString().isEmpty()){
             Long chatId = parameters.get("chatId").getAsLong();
             Chat chat = chatService.getById(chatId);
             send = chat.getReceiverUid().equals(uid)?chat.getSendUid():chat.getSendUid();
-
+            msgValue.setSendUid(send);
         }
-
-        //通过chatId 获取chat对象
-        switch (sendMsgCommand(msgType)) {
-            case PERSON_MESSAGE:
-                sendPersonMsg(send, parameters,uid);
-                break;
-            case GROUP_MESSAGE:
-                log.info("给群发送消息");
-                break;
-            case HEART_MESSAGE:
-                sendHeart(uid);
-                break;
-            case PUBLISH_MESSAGE:
-                sendPublishMessage(uid, parameters);
-            default:
-                log.info("未知类型的消息");
-                throw new CustomException("消息类型异常");
-        }
+        String content = parameters.get("content").getAsString();
+        msgValue.setContent(content);
+        return msgValue;
     }
-
-
 
     public MessageEnum sendMsgCommand(int value) {
         for (MessageEnum item : MessageEnum.values()) {
@@ -191,7 +225,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     public void sendSystemMsg(JsonObject jsonObject) {
 
     }
-
     public void sendHeart(String id) {
         log.info("当前用户的id为{}", id);
         WebSocketSession webSocketSession = userList.get(id);
@@ -210,7 +243,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     /**
      * 发布动态消息
      */
-    public void sendPublishMessage(String sendId, JsonObject obj) {
+    public void   sendPublishMessage(String sendId, JsonObject obj) {
 
     }
 
@@ -239,9 +272,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
      */
     public void sendPersonMsg(String msgSend, JsonObject obj,String receiverUid) {
         log.info("用户{}给用户{}发送{}类型的消息",msgSend,receiverUid,"个人消息");
-        System.out.println(obj.toString());
-//        String receiverUid = obj.get("msgReceiver").getAsString();
-//        String msgSend = obj.get("msgSend").getAsString();
         //获取消息内容
         String content = obj.get("content").getAsString();
         JsonElement chatId1 = obj.get("chatId");
@@ -267,25 +297,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }
         //获取需要接收信息的用户通道
         WebSocketSession webSocketSession = userList.get(receiverUid);
-        //如果用户不在线就把消息存入数据库中
-//        if (webSocketSession == null) {
-//            Message message = new Message();
-//            message.setSendUid(msgSend);
-//            message.setReceiverUid(receiverUid);
-//            message.setContent(content);
-//            message.setStatus(2);
-//            message.setMessageId(messageId);
-//            message.setChatId(chatId);
-////            System.out.println(message);
-//            messageService.save(message);
-////            return;
-//        }
-        try {
-//            String sendNickname = obj.get("sendNickname").getAsString();
-//            String receiverNickname = obj.get("receiverNickname").getAsString();
 
+
+        try {
             //通过chatid去查询出用户的昵称
-//            Chat chat = chatService.getById(chatId);
             //通过uid 去查询用户的信息
             User send = userService.getById(msgSend);
             User receiver = userService.getById(receiverUid);
@@ -321,7 +336,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         return parameters;
     }
 
-    public MessageDetail getMessageDetail(String messageId, String sendUid, String receiverUid,
+
+
+
+    public static MessageDetail getMessageDetail(String messageId, String sendUid, String receiverUid,
                                           String content, String sendNickname, String receiverNickname, String chatId) {
         MessageDetail detail = new MessageDetail();
 
@@ -335,5 +353,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         detail.setReceiverNickname(receiverNickname);
         detail.setChatId(chatId);
         return detail;
+    }
+
+
+    private void sendMsg(){
+
     }
 }
