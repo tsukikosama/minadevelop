@@ -16,9 +16,7 @@ public class IpBasedInterceptor implements HandlerInterceptor {
     //在请求处理之前调用
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println(request);
-        System.out.println(response);
-        System.out.println(handler);
+       
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 

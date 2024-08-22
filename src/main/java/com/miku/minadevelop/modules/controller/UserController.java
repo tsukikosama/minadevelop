@@ -68,14 +68,9 @@ public class UserController {
     @PostMapping("/login/{rememberMe}")
     @ApiOperation("登录功能")
     public Result login(@RequestBody User user,@ApiParam("是否记住密码") @PathVariable(value = "rememberMe",required = false) boolean rememberMe) {
-        System.out.println(user);
-        System.out.println("66");
+
 
         User one = userService.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, user.getAccount()));
-        List<User> list = userService.list();
-        System.out.println(list.size());
-        System.out.println(one);
-
         if (one == null) {
             return Result.fail("账号不存在",406);
         }

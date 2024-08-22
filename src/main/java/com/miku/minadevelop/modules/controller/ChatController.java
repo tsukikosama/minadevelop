@@ -52,6 +52,7 @@ public class ChatController {
         return Result.ok(relation);
     }
 
+
     @ApiOperation("通过chatId获取聊天关系")
     @GetMapping("/chatIdRelation/{chatId}/{uid}")
     public Result getChatRelationByChatId(@PathVariable(value = "chatId")String chatId,@PathVariable(value = "uid") String uid){

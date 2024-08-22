@@ -38,7 +38,7 @@ spring:
       matching-strategy: ant_path_matcher
 
 server:
-  port: 8099
+  port: 8090
   servlet:
     multipart:
       enabled: true

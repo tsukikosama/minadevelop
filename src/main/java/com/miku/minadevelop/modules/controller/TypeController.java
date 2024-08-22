@@ -70,4 +70,15 @@ public class TypeController {
         typeService.save(type);
         return Result.ok("保存成功");
     }
+
+    @GetMapping("/test")
+    public Result test(){
+        try {
+
+        }catch (Exception e){
+            throw new CustomException("报错拉");
+        }
+        throw new CustomException("报错拉");
+//        return Result.fail("500服务器错误",500);
+    }
 }
