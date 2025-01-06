@@ -22,9 +22,9 @@ public class voteDemo {
    @PostMapping("/like")
    public Result vote(@RequestParam("id")String id,@RequestParam("article") String article,@RequestParam("user") String user){
        //判断库中是否拥有改数据
-       Long rank = stringRedisTemplate.opsForZSet().rank("article",0);
+       Long rank = stringRedisTemplate.opsForZSet().rank("article",id);
        System.out.println(rank);
-       if (rank == 0){
+       if (rank == null){
             //未获取到初始化
            stringRedisTemplate.opsForZSet().add("article",id,1);
            stringRedisTemplate.opsForSet().add("article"+id,user);
@@ -32,7 +32,9 @@ public class voteDemo {
            //判断用户是否点赞过了
            if (!stringRedisTemplate.opsForSet().isMember("article"+id,user)){
                stringRedisTemplate.opsForSet().add("article"+id,user);
-               stringRedisTemplate.opsForZSet().add("article",id,rank +1);
+               //获取分数
+               Double currentScore = stringRedisTemplate.opsForZSet().score("article", id);
+               stringRedisTemplate.opsForZSet().add("article",id,currentScore+1);
            }else{
                return Result.ok("已经点赞过了");
            }
