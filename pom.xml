@@ -171,6 +171,12 @@
             <artifactId>shiro-spring</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <dependency>
+            <!--用来模拟浏览器发送http请求的一个工具-->
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
     </dependencies>
 
     <build>

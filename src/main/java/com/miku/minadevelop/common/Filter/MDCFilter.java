@@ -26,10 +26,14 @@ public class MDCFilter extends OncePerRequestFilter {
             // 从请求中获取用户ID（假设它作为请求头传递）
             String userId = request.getHeader("X-UserId");
             if (userId != null) {
-                MDC.put("userId", StpUtil.getLoginId().toString());
+                MDC.put("userId", StpUtil.getLoginIdAsString());
             }
             filterChain.doFilter(request, response);
-        } finally {
+        }catch (Exception e){
+            log.error("Error processing request", e);
+            throw e; // Rethrow the exception to ensure proper error handling
+        }
+        finally {
             MDC.clear();
         }
     }
